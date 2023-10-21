@@ -1,0 +1,74 @@
+header {
+    background-color: #333; 
+    color: #fff;
+    padding: 20px; 
+}
+
+nav ul {
+    list-style: none;
+}
+
+nav li {
+    display: inline;
+    margin-right: 20px;
+}
+
+a {
+    text-decoration: none;
+    color: #fff;
+}
+
+body {
+    margin: 0;
+    padding: 0;
+    background: rgb(0, 0, 0) url("images/background.png") repeat;
+    background-attachment: fixed;
+    background-size: cover;
+}
+
+th {
+    color: chocolate
+}
+
+td {
+    color: yellow
+}
+
+.tools-panel {
+    position: fixed;
+    top: 150;
+    left: 0;
+    width: 100px; 
+    height: 900px;
+    background-color: #333; 
+    color: #fff; 
+    padding: 0px; 
+}
+
+.green-rectangle {
+    width: 20px;
+    height: 20px;
+    background-color: green;
+}
+
+.yellow-rectangle {
+    width: 20px;
+    height: 20px;
+    background-color: yellow;
+}
+
+.red-rectangle {
+    width: 20px;
+    height: 20px;
+    background-color: red;
+}
+
+#tools-panel {
+    display: none;
+}
+
+.tools-toggle:hover + #tools-panel,
+.tools-toggle:active + #tools-panel {
+    display: block;
+}
+
