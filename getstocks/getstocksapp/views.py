@@ -14,11 +14,16 @@ import io
 import urllib
 import base64
 import yfinance as yf
+import random
 
 tickers = [
-    "AAPL", "MSFT", "AMZN", "GOOGL", "KO", "PG", "GE", "JNJ", "V", "JPM",
+    "AAPL", "MSFT", "AMZN", "GOOGL", "KO", "PG", "GE", "JNJ", "V", "JPM", "META",
     "TSLA", "AMZN", "NFLX", "GOOG", "INTC", "NVDA", "ADBE", "CSCO", "PYPL" 
 ]
+ticker_list_one = tickers[:10]
+ticker_list_two = tickers[10:]
+
+api_key= '4KL6FXFAI196YG5S'
 
 def show_stock_data(ticker: str):
     stock_data = yf.Ticker(ticker)
@@ -33,16 +38,19 @@ class IndexView(generic.TemplateView):
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         ticker = self.request.GET.get('ticker')
-        if ticker:
-            data = show_stock_data(ticker)
-        else:
-            data = show_stock_data("AAPL")
+        if not ticker:
+            ticker = random.choice(tickers)
+        print (ticker)
+        data = show_stock_data(ticker)
         data_list = list(data.iterrows())
         data = reversed(data_list)
-        country = Country.objects.all()
-        context["country"] = country
+        countries = Country.objects.all()
+        context["countries"] = countries
         context['data'] = data
         context['tickers'] = tickers
+        context['tickers_one'] = ticker_list_one
+        context['tickers_two'] = ticker_list_two
+        context['ticker'] = ticker
         return context
     
 class CountryReview(generic.DetailView):

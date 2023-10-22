@@ -22,7 +22,7 @@
 </header>
 <div class="tools-panel">
     <ul>
-        {% for c in country %}
+        {% for c in countries %}
         <a href="{% url 'getstocksapp:countryreview' c.id %}">
             <img style = "margin-left: -35px;" src="{% static c.flag_img %}" alt="{{c.name}}">
         </a>
@@ -38,9 +38,25 @@
     </div>
     <div>
         <p style="text-align: center; color: gold; font-size: 70px; margin-top: 0px;">POPULAR STOCKS:</p>
+        <ul style="list-style: none; display: flex; justify-content: center;">
+            {% for tick in tickers_one %}
+            <li style="margin-right: 10px;">
+                <a href="#" style="color: gold; font-size: 20px;">{{ tick }}</a>
+            </li>
+            {% endfor %}
+        </ul>
+        <ul style="list-style: none; display: flex; justify-content: center;">
+            {% for tick in tickers_two %}
+            <li style="margin-right: 10px;">
+                <a href="#" style="color: gold; font-size: 20px;">{{ tick }}</a>
+            </li>
+            {% endfor %}
+        </ul>
     </div>
+    
+    
     <table border="1" style="margin-left: 200px;">
-        <h style="margin-left: 200px; color:gold">tabela</h>
+        <h style="margin-left: 200px; font-size: 50px; color:gold">{{ticker}}</h>
         <tr>
             <th>Date</th>
             <th>Open</th>
