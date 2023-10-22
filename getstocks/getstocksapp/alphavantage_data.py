@@ -37,19 +37,19 @@ class TickerInfo:
     def get_all_info(self):
         api_info, meta_data = fd.get_company_overview(symbol=self.ticker)
         self.company_name = api_info["Name"]
-        self.description = api_info["Description"]
+        self.description = short_text(api_info["Description"])
         self.currency = api_info["Currency"]
         self.country = api_info["Country"]
         self.sector = api_info["Sector"]
         self.industry = api_info["Industry"]
         self.exchange = api_info["Exchange"]
-        self.address = api_info["Address"]  
+        self.address = api_info["Address"]
 
 
     def get_particular_info(ticker: str, key: str) -> str:
         try:
             company_data, meta_data = fd.get_company_overview(symbol=ticker)
-            return company_data[key]
+            return short_text(company_data[key])
         except KeyError:
             return "NO DATA"
         except ValueError:
@@ -62,5 +62,17 @@ def get_ticker_info_obj(ticker: str) -> TickerInfo:
     return obj
 
 
+def short_text(text: str, max_lenght: int = 255) -> str:
+    sentences = text.split(". ")
+    new_text = ""
+    total_lenght = 0
+    for sentence in sentences:
+        sentence += ". "
+        if total_lenght + len(sentence) <= max_lenght:
+            total_lenght += len(sentence)
+            new_text += sentence
+        else:
+            break
+    return new_text
 
 
