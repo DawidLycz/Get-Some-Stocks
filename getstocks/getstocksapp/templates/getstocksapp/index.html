@@ -22,9 +22,9 @@
 </header>
 <div class="tools-panel">
     <ul>
-        {% for c in countries %}
-        <a href="{% url 'getstocksapp:countryreview' c.id %}">
-            <img style = "margin-left: -35px;" src="{% static c.flag_img %}" alt="{{c.name}}">
+        {% for market in markets %}
+        <a href="{% url 'getstocksapp:marketreview' market.id %}">
+            <img style = "margin-left: -35px; width: 80px; height: 80px; border: 5px solid #ff7c11;" src="{{ market.logo_img.url }}" alt="{{market.name}}">
         </a>
         {% endfor %}  
     </ul>
@@ -41,22 +41,22 @@
         <ul style="list-style: none; display: flex; justify-content: center;">
             {% for tick in tickers_one %}
             <li style="margin-right: 10px;">
-                <a href="#" style="color: gold; font-size: 20px;">{{ tick }}</a>
+                <a href="{% url 'getstocksapp:home' %}?ticker={{ tick }}" style="color: gold; font-size: 20px;">{{ tick }}</a>
             </li>
             {% endfor %}
         </ul>
         <ul style="list-style: none; display: flex; justify-content: center;">
             {% for tick in tickers_two %}
             <li style="margin-right: 10px;">
-                <a href="#" style="color: gold; font-size: 20px;">{{ tick }}</a>
+                <a href="{% url 'getstocksapp:home' %}?ticker={{ tick }}" style="color: gold; font-size: 20px;">{{ tick }}</a>
             </li>
             {% endfor %}
         </ul>
     </div>
     
     
-    <table border="1" style="margin-left: 200px;">
-        <h style="margin-left: 200px; font-size: 50px; color:gold">{{ticker}}</h>
+    <table border="5" style="width: 40%; table-layout: auto; margin-left: 20%; border-color: #ff7c11; background-color: rgb(16, 0, 46);">
+        <h1 style="margin-left: 20%; font-size: 50px; color: gold;">{{ ticker }}</h1>
         <tr>
             <th>Date</th>
             <th>Open</th>
@@ -72,18 +72,15 @@
             <td>{{ record.High|floatformat:2 }} USD</td>
             <td>{{ record.Low|floatformat:2 }} USD</td>
             <td>{{ record.Close|floatformat:2 }} USD</td>
-            <td>
-                {% if record.Open < record.Close %}
-                    <div style="width: 50px; height: 20px; background-color: green;"></div>
-                {% elif record.Open == record.Close %}
-                    <div style="width: 50px; height: 20px; background-color: yellow;"></div>
-                {% else %}
-                    <div style="width: 50px; height: 20px; background-color: red;"></div>
-                {% endif %}
-            </td>
-            
+            {% if record.Growth > 0 %}
+                <td style="color: green;">+{{ record.Growth|floatformat:2 }} USD</td>
+            {% else %}
+                <td style="color: red;">{{ record.Growth|floatformat:2 }} USD</td>
+            {% endif %}
+        </tr>
         {% endfor %}
     </table>
+    
 
 
 </body>

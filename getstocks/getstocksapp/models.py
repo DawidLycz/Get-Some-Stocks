@@ -1,13 +1,10 @@
 from django.db import models
 from .alphavantage_data import get_ticker_info_obj
 
-class Country(models.Model):
+class Market(models.Model):
     name = models.CharField(max_length=200)
-    flag_img = models.CharField(max_length=200, default="BLANKFLAG.png")
-
-    def save(self, *args, **kwargs):
-        self.flag_img = f'getstocksapp/flag_images/{self.flag_img}'
-        super().save(*args, **kwargs)
+    logo_path = models.CharField(max_length=200, default="BLANKFLAG.png")
+    logo_img = models.ImageField(upload_to='market_logos/', blank=True, null=True)
 
     def __str__(self) -> str:
         return self.name
@@ -22,7 +19,7 @@ class Ticker(models.Model):
     industry = models.CharField(max_length=255, default="No data")
     exchange = models.CharField(max_length=255, default="No data")
     address = models.CharField(max_length=255, default="No data")
-    origin_country = models.ForeignKey(Country, on_delete=models.CASCADE)
+    origin_market = models.ForeignKey(Market, on_delete=models.CASCADE)
     data_fetched = models.BooleanField(default=False)
 
 
@@ -30,7 +27,7 @@ class Ticker(models.Model):
         return self.ticker_name
 
 
-    def save(self, *args, **kwargs):
+    def download_data(self, *args, **kwargs):
         if not self.data_fetched:
             ticker_info = get_ticker_info_obj(self.ticker_name)
             self.company_name = ticker_info.company_name

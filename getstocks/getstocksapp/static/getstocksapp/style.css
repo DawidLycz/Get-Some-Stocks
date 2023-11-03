@@ -45,6 +45,12 @@ td {
     padding: 0px; 
 }
 
+.image-frame {
+    border: 6px solid #fa7000; /* Grubość i kolor ramki */
+    padding: 10px; /* Wewnętrzny odstęp od obrazu */
+    border-radius: 10px; /* Zaokrąglenie narożników ramki (opcjonalne) */
+}
+
 .green-rectangle {
     width: 20px;
     height: 20px;

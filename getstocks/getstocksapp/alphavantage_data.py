@@ -8,14 +8,14 @@ class TickerInfo:
     def __init__(
         self,
         ticker: str,
-        company_name: str=None,
-        description: str=None,
-        currency: str=None,
-        country: str=None,
-        sector: str=None,
-        industry: str=None,
-        exchange: str=None,
-        address: str=None,
+        company_name: str="No data",
+        description: str="No data",
+        currency: str="No data",
+        country: str="No data",
+        sector: str="No data",
+        industry: str="No data",
+        exchange: str="No data",
+        address: str="No data",
     ):
         self.ticker = ticker
         self.company_name = company_name
@@ -35,15 +35,28 @@ class TickerInfo:
 
 
     def get_all_info(self):
-        api_info, meta_data = fd.get_company_overview(symbol=self.ticker)
-        self.company_name = api_info["Name"]
-        self.description = short_text(api_info["Description"])
-        self.currency = api_info["Currency"]
-        self.country = api_info["Country"]
-        self.sector = api_info["Sector"]
-        self.industry = api_info["Industry"]
-        self.exchange = api_info["Exchange"]
-        self.address = api_info["Address"]
+        try:
+            api_info, meta_data = fd.get_company_overview(symbol=self.ticker)
+            if api_info["Name"]:
+                self.company_name = api_info["Name"]
+            if api_info["Description"]:
+                self.description = short_text(api_info["Description"])
+            if api_info["Currency"]:
+                self.currency = api_info["Currency"]
+            if api_info["Country"]:
+                self.country = api_info["Country"]
+            if api_info["Sector"]:
+                self.sector = api_info["Sector"]
+            if api_info["Industry"]:
+                self.industry = api_info["Industry"]
+            if api_info["Industry"]:
+                self.industry = api_info["Industry"]
+            if api_info["Exchange"]:
+                self.exchange = api_info["Exchange"]
+            if api_info["Address"]:
+                self.address = api_info["Address"]
+        except ValueError:
+            print ("Data can't be fetch")
 
 
     def get_particular_info(ticker: str, key: str) -> str:
