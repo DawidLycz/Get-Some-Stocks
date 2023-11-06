@@ -23,12 +23,33 @@ import yfinance as yf
 import random
 import csv
 
-tickers = [
-    "AAPL", "MSFT", "AMZN", "GOOGL", "KO", "PG", "GE", "JNJ", "V", "JPM", "META",
-    "TSLA", "AMZN", "NFLX", "GOOG", "INTC", "NVDA", "ADBE", "CSCO", "PYPL" 
-]
-ticker_list_one = tickers[:10]
-ticker_list_two = tickers[10:]
+tickers = {
+    "AAPL": "Apple Inc.",
+    "MSFT": "Microsoft Corporation",
+    "AMZN": "Amazon.com, Inc.",
+    "GOOGL": "Alphabet Inc.",
+    "KO": "The Coca-Cola Company",
+    "PG": "Procter & Gamble Co.",
+    "GE": "General Electric Co.",
+    "JNJ": "Johnson & Johnson",
+    "V": "Visa Inc.",
+    "JPM": "JPMorgan Chase & Co.",
+    "META": "Meta Platforms, Inc.",
+    "TSLA": "Tesla, Inc.",
+    "AMZN": "Amazon.com, Inc.",
+    "NFLX": "Netflix, Inc.",
+    "GOOG": "Alphabet Inc.",
+    "INTC": "Intel Corporation",
+    "NVDA": "NVIDIA Corporation",
+    "ADBE": "Adobe Inc.",
+    "CSCO": "Cisco Systems, Inc.",
+    "PYPL": "PayPal Holdings, Inc."
+}
+
+ticker_key_list = list(tickers.keys())
+middle = len(ticker_key_list) // 2
+ticker_list_one = ticker_key_list[middle:]
+ticker_list_two = ticker_key_list[:middle]
 
 
 def show_stock_data(ticker: str):
@@ -45,23 +66,34 @@ class IndexView(generic.TemplateView):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        ticker = self.request.GET.get('ticker')
+        ticker = self.request.GET.get('ticker_click')
         if not ticker:
-            ticker = random.choice(tickers)
+            ticker = random.choice(ticker_list_one)
         data = show_stock_data(ticker)
         markets = Market.objects.all()
         context["markets"] = markets
         context['data'] = data
-        context['tickers'] = tickers
         context['tickers_one'] = ticker_list_one
         context['tickers_two'] = ticker_list_two
         context['ticker'] = ticker
+        context['company_name'] = tickers[ticker]
         return context
     
 class MarketReview(generic.DetailView):
     model = Market
-    template = "getstocksapp/country_review.html"
+    template = "getstocksapp/market_detail.html"
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        market = self.get_object()
+        tickers = Ticker.objects.filter(origin_market=market)
+        tickers = Ticker.objects.filter(data_fetched=True)
+        sort_by = self.request.GET.get('sort_by')
+        if not sort_by:
+            sort_by = 'company_name'
+        tickers = tickers.order_by(sort_by)
+        context['related_tickers'] = tickers
+        return context
 
 class CSVUploadView(FormView):
     template_name = 'getstocksapp/upload_csv.html'
@@ -90,7 +122,6 @@ class CSVUploadView(FormView):
         
     def process_csv(self, file):
         csv_data = []
-
         try:
             reader = csv.DictReader(file.read().decode('utf-8').splitlines())
             for row in reader:

@@ -1,1 +1,53 @@
-market
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Market Review</title>
+</head>
+
+
+</html>
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'getstocksapp/style.css' %}">
+<header>
+    <nav>
+        <ul>
+            <li><a href="{% url 'getstocksapp:home' %}">Homepage</a></li>
+            <li><a href="#">About us</a></li>
+            <li><a href="#">Services</a></li>
+            <li><a href="#">Contact</a></li>
+        </ul>
+    </nav>
+</header>
+
+<body>
+    <div>
+        <h1 style= "font-size: 90px; color: gold; text-align: center;">{{ market.name }}</h1>
+        <a style="font-size: 20px; color: gold;">{{ market.description|linebreaks }}</a>
+        <a href="{{ market.website }}" style=" font-size: 30px; color: rgb(255, 102, 0);">Visit {{ market.name }} website</a>
+    </div>
+    <table border="5" style="border-color: #ff7c11; background-color: rgb(16, 0, 46);">
+        <h1 style="text-align: center; font-size: 50px; color: gold;">STOCKS</h1>
+        <tr>
+            <th><a href = "{% url 'getstocksapp:marketreview' market.id %}?sort_by=ticker_name">Ticker</a></th>
+            <th><a href = "{% url 'getstocksapp:marketreview' market.id %}?sort_by=company_name">Name</a></th>
+            <th><a href = "{% url 'getstocksapp:marketreview' market.id %}?sort_by=sector">Sector</a></th>
+            <th><a href = "{% url 'getstocksapp:marketreview' market.id %}?sort_by=industry">Industry</a></th>
+            <th><a href = "{% url 'getstocksapp:marketreview' market.id %}?sort_by=-capitalization">Market Capitalization</a></th>
+            <th width = 200px>Move</th>
+        </tr>{% for ticker in related_tickers %}
+        <tr>
+            <td>{{ ticker.ticker_name }}</td>
+            <td>{{ ticker.company_name }}</td>
+            <td>{{ ticker.sector }}</td>
+            <td>{{ ticker.industry }}</td>
+            <td>{{ ticker.capitalization }} USD</td>
+            <td style="color: green; text-align: center;"> DETAILS </td>
+    
+        </tr>
+        {% endfor %}
+    </table>  
+</body>
+
+<!-- <a href="{% url 'getstocksapp:marketreview' market.id %}"></a> -->

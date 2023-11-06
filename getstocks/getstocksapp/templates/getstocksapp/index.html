@@ -13,7 +13,7 @@
 <header>
     <nav>
         <ul>
-            <li><a href="#">Homepage</a></li>
+            <li><a href="{% url 'getstocksapp:home' %}">Homepage</a></li>
             <li><a href="#">About us</a></li>
             <li><a href="#">Services</a></li>
             <li><a href="#">Contact</a></li>
@@ -39,16 +39,16 @@
     <div>
         <p style="text-align: center; color: gold; font-size: 70px; margin-top: 0px;">POPULAR STOCKS:</p>
         <ul style="list-style: none; display: flex; justify-content: center;">
-            {% for tick in tickers_one %}
+            {% for ticker in tickers_one %}
             <li style="margin-right: 10px;">
-                <a href="{% url 'getstocksapp:home' %}?ticker={{ tick }}" style="color: gold; font-size: 20px;">{{ tick }}</a>
+                <a href="{% url 'getstocksapp:home' %}?ticker_click={{ ticker }}" style="color: gold; font-size: 20px;">{{ ticker }}</a>
             </li>
             {% endfor %}
         </ul>
         <ul style="list-style: none; display: flex; justify-content: center;">
-            {% for tick in tickers_two %}
+            {% for ticker in tickers_two %}
             <li style="margin-right: 10px;">
-                <a href="{% url 'getstocksapp:home' %}?ticker={{ tick }}" style="color: gold; font-size: 20px;">{{ tick }}</a>
+                <a href="{% url 'getstocksapp:home' %}?ticker_click={{ ticker }}" style="color: gold; font-size: 20px;">{{ ticker }}</a>
             </li>
             {% endfor %}
         </ul>
@@ -56,7 +56,7 @@
     
     
     <table border="5" style="width: 40%; table-layout: auto; margin-left: 20%; border-color: #ff7c11; background-color: rgb(16, 0, 46);">
-        <h1 style="margin-left: 20%; font-size: 50px; color: gold;">{{ ticker }}</h1>
+        <h1 style="margin-left: 20%; font-size: 50px; color: gold;">{{ company_name }}</h1>
         <tr>
             <th>Date</th>
             <th>Open</th>

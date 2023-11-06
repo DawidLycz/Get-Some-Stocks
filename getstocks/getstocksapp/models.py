@@ -3,8 +3,9 @@ from .alphavantage_data import get_ticker_info_obj
 
 class Market(models.Model):
     name = models.CharField(max_length=200)
-    logo_path = models.CharField(max_length=200, default="BLANKFLAG.png")
     logo_img = models.ImageField(upload_to='market_logos/', blank=True, null=True)
+    description = models.TextField(default='')
+    website = models.URLField(default='#')
 
     def __str__(self) -> str:
         return self.name
@@ -19,9 +20,12 @@ class Ticker(models.Model):
     industry = models.CharField(max_length=255, default="No data")
     exchange = models.CharField(max_length=255, default="No data")
     address = models.CharField(max_length=255, default="No data")
+    capitalization = models.BigIntegerField(default=0)
     origin_market = models.ForeignKey(Market, on_delete=models.CASCADE)
     data_fetched = models.BooleanField(default=False)
 
+    class Meta:
+        unique_together = ('ticker_name', 'origin_market')
 
     def __str__(self) -> str:
         return self.ticker_name
@@ -37,5 +41,6 @@ class Ticker(models.Model):
             self.industry = ticker_info.industry
             self.exchange = ticker_info.exchange
             self.address = ticker_info.address
+            self.capitalization = ticker_info.capitalization
             self.data_fetched= True
-        super().save(*args, **kwargs)
+            super().save(*args, **kwargs)

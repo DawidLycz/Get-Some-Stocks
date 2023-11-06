@@ -10,10 +10,18 @@ from django import forms
 from django.contrib import admin
 from .models import Ticker
 import csv
-
+from django.urls import reverse
+from django.http import HttpResponseRedirect
 
 from django.contrib import admin
 from .models import Market
+
+class CustomAdminSite(admin.sites.AdminSite):
+    site_header = "Get Some Stocks"
+    
+    def custom_link(self, request):
+        return(HttpResponseRedirect('upload_csv'))
+
 
 class MarketAdmin(admin.ModelAdmin):
     list_display = ('name', 'logo_thumbnail') 
@@ -32,7 +40,7 @@ from .models import Ticker
 
 class TickerAdmin(admin.ModelAdmin):
     
-    list_display = ('ticker_name', 'company_name', 'origin_market','data_fetched')
+    list_display = ('ticker_name', 'company_name', 'origin_market', 'capitalization', 'data_fetched')
     list_filter = ['origin_market']
     ordering = ['ticker_name']
     actions = ['fetch_data', 'mark_unfetch']
@@ -56,3 +64,4 @@ class TickerAdmin(admin.ModelAdmin):
 
 admin.site.register(Market, MarketAdmin)
 admin.site.register(Ticker, TickerAdmin)
+custom_admin_site = CustomAdminSite(name='custom_admin')

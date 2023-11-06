@@ -10,8 +10,6 @@ app_name = "getstocksapp"
 urlpatterns = [
     path('', views.IndexView.as_view(), name='home'),
     path('<int:pk>', views.MarketReview.as_view(), name='marketreview'),
-    path('accounts/login/', auth_views.LoginView.as_view(), name='login'),
-    path('accounts/logout/', auth_views.LogoutView.as_view(), name='logout'),
     path('upload_csv', views.CSVUploadView.as_view(), name='upload_csv'),
 ]
 

@@ -16,6 +16,7 @@ class TickerInfo:
         industry: str="No data",
         exchange: str="No data",
         address: str="No data",
+        capitalization : int=0,
     ):
         self.ticker = ticker
         self.company_name = company_name
@@ -26,12 +27,13 @@ class TickerInfo:
         self.industry = industry
         self.exchange = exchange
         self.address = address
+        self.capitalization = capitalization
     
     def __str__(self):
         return self.ticker
     
     def __repr__(self):
-        return f"{self.company_name}, {self.description}, {self.currency}, {self.country}, {self.sector}, {self.industry}, {self.exchange}, {self.address}"
+        return f"({self.company_name}, {self.description}, {self.currency}, {self.country}, {self.sector}, {self.industry}, {self.exchange}, {self.address}, {self.capitalization})"
 
 
     def get_all_info(self):
@@ -55,6 +57,8 @@ class TickerInfo:
                 self.exchange = api_info["Exchange"]
             if api_info["Address"]:
                 self.address = api_info["Address"]
+            if api_info["MarketCapitalization"]:
+                self.capitalization = api_info["MarketCapitalization"]
         except ValueError:
             print ("Data can't be fetch")
 
@@ -87,5 +91,3 @@ def short_text(text: str, max_lenght: int = 255) -> str:
         else:
             break
     return new_text
-
-
