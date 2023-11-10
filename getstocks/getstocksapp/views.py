@@ -16,7 +16,7 @@ from django.contrib import messages
 from django.urls import reverse_lazy
 
 import matplotlib.pyplot as plt
-import io
+from io import BytesIO
 import urllib
 import base64
 import yfinance as yf
@@ -52,13 +52,47 @@ ticker_list_one = ticker_key_list[middle:]
 ticker_list_two = ticker_key_list[:middle]
 
 
-def show_stock_data(ticker: str):
+def get_stock_data(ticker: str, period: str = "1y", reverse: bool = False):
     stock_data = yf.Ticker(ticker)
-    data = stock_data.history(period="1y")
+    data = stock_data.history(period=period)
     data["Growth"] = data["Close"] - data["Open"]
-    data_list = list(data.iterrows())
-    data = reversed(data_list)
+    if reverse:
+        data_list = list(data.iterrows())
+        data = reversed(data_list)
     return data
+
+def create_chart(data, ticker: Ticker, period: str = "1y"):
+    
+    plt.figure(figsize=(12, 6))
+    plt.plot(data.index, data["Close"], label="Open price", color="gold")
+
+    plt.title(f'{ticker} stock price for last {period}.', color='gold')
+    plt.xlabel('DATE')
+    plt.ylabel(ticker.currency)
+
+    plt.grid(visible=True, color='gold', linewidth=0.2)
+
+    plt.gca().xaxis.label.set_color('#ff7c11')
+    plt.gca().yaxis.label.set_color('#ff7c11')
+    
+    plt.gca().spines['left'].set_color('#ff7c11') 
+    plt.gca().spines['bottom'].set_color('#ff7c11') 
+    plt.gca().spines['right'].set_color('none')
+    plt.gca().spines['top'].set_color('none')
+    
+    plt.tick_params(axis='x', colors='gold')
+    plt.tick_params(axis='y', colors='gold')
+
+    for axis in ['top','bottom','left','right']:
+        plt.gca().spines[axis].set_linewidth(3.5)
+
+    buffer = BytesIO()
+    plt.savefig(buffer, format='png', transparent = True)
+    buffer.seek(0)
+    image_base64 = base64.b64encode(buffer.read()).decode()
+    buffer.close() 
+
+    return image_base64
 
 class IndexView(generic.TemplateView):
     
@@ -69,7 +103,7 @@ class IndexView(generic.TemplateView):
         ticker = self.request.GET.get('ticker_click')
         if not ticker:
             ticker = random.choice(ticker_list_one)
-        data = show_stock_data(ticker)
+        data = get_stock_data(ticker, reverse=True)
         markets = Market.objects.all()
         context["markets"] = markets
         context['data'] = data
@@ -93,6 +127,18 @@ class MarketReview(generic.DetailView):
             sort_by = 'company_name'
         tickers = tickers.order_by(sort_by)
         context['related_tickers'] = tickers
+        return context
+
+class TickerReview(generic.DetailView):
+    model = Ticker
+    template = "getstocksapp/ticker_detail.html"
+    
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        ticker = self.get_object()
+        period = "1y"
+        data = get_stock_data(ticker=ticker.ticker_name, period=period)
+        context['chart'] = create_chart(data, ticker, period)
         return context
 
 class CSVUploadView(FormView):

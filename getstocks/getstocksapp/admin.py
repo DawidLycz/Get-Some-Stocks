@@ -40,11 +40,10 @@ from .models import Ticker
 
 class TickerAdmin(admin.ModelAdmin):
     
-    list_display = ('ticker_name', 'company_name', 'origin_market', 'capitalization', 'data_fetched')
-    list_filter = ['origin_market']
+    list_display = ('ticker_name', 'company_name', 'origin_market', 'data_fetched', 'full_data', 'for_display')
+    list_filter = ['origin_market','data_fetched', 'full_data', 'for_display']
     ordering = ['ticker_name']
-    actions = ['fetch_data', 'mark_unfetch']
-
+    actions = ['fetch_data', 'mark_unfetch', 'verify_data', 'mark_for_display_unconditionaly', 'mark_for_display_if_full_data']
 
     def fetch_data(self, request, queryset):
         
@@ -57,10 +56,32 @@ class TickerAdmin(admin.ModelAdmin):
         for ticker in querryset:
             ticker.data_fetched = False
             ticker.save()
-        self.message_user(request, "Records has been set as unfetched")        
-    
+        self.message_user(request, "Records has been set as unfetched")
+
+    def mark_for_display_unconditionaly(self, request, querryset):
+
+        for ticker in querryset:
+            ticker.set_for_display() 
+        self.message_user(request, "Records has been set as for display")
+
+    def mark_for_display_if_full_data(self, request, querryset):
+
+        for ticker in querryset:
+            if ticker.full_data:
+                ticker.set_for_display()      
+        self.message_user(request, "Records has been set as for display")
+
+    def verify_data(self, request, querryset):
+        for ticker in querryset:
+            ticker.verify_full_data()
+        self.message_user(request, "Data has been verified. Tickers with full data has been marked")
+
+
     mark_unfetch.short_description = "Mark unfetched"
     fetch_data.short_description = "Fetch data"
+    verify_data.short_description = "Verify if data in database"
+    mark_for_display_if_full_data.short_description = "Mark ticker as 'for display' if full data"
+    mark_for_display_unconditionaly.short_description = "Mark ticker as 'for display' unconditionaly"
 
 admin.site.register(Market, MarketAdmin)
 admin.site.register(Ticker, TickerAdmin)

@@ -15,12 +15,10 @@ def show_stock_data(ticker: str):
     data = data.iterrows()
     return data
 
-ticker = "AAPL"
+ticker = "AAIN"
+
 data = show_stock_data(ticker)
-
-for index, row in data:
-    print(row.Growth)
-
+print (type(data))
 
 
 

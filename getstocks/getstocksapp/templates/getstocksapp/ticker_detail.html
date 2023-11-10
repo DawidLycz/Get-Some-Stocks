@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Market Review</title>
+</head>
+
+
+</html>
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'getstocksapp/style.css' %}">
+<header>
+    <nav>
+        <ul>
+            <li><a href="{% url 'getstocksapp:home' %}">Homepage</a></li>
+            <li><a href="">About us</a></li>
+            <li><a href="">Services</a></li>
+            <li><a href="">Contact</a></li>
+        </ul>
+    </nav>
+</header>
+
+<body>
+    <div>
+        <h1 style= "font-size: 90px; color: gold; text-align: center;">{{ ticker.company_name }}</h1>
+        {% if ticker.company_description != "No data" %}
+            <a style="font-size: 20px; color: gold;">{{ ticker.company_description|linebreaks }}</a>
+        {% else %}
+            <a style="font-size: 20px; color: gold;">No info avalible</a>
+        {% endif %}
+    </div>
+    <div>
+        <img src="data:image/png;base64,{{ chart }}" alt="Wykres">
+    </div>
+</body>
+

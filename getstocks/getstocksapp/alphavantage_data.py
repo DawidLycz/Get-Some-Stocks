@@ -42,7 +42,10 @@ class TickerInfo:
             if api_info["Name"]:
                 self.company_name = api_info["Name"]
             if api_info["Description"]:
-                self.description = short_text(api_info["Description"])
+                if api_info["Description"] == "None":
+                    self.description = "No data"
+                else:
+                    self.description = short_text(api_info["Description"])
             if api_info["Currency"]:
                 self.currency = api_info["Currency"]
             if api_info["Country"]:
@@ -58,7 +61,13 @@ class TickerInfo:
             if api_info["Address"]:
                 self.address = api_info["Address"]
             if api_info["MarketCapitalization"]:
-                self.capitalization = api_info["MarketCapitalization"]
+                try:
+                    self.capitalization = int(api_info["MarketCapitalization"])
+                except ValueError:
+                    self.capitalization = 0
+            else:
+                self.capitalization = 0
+            print ("Data fetched successfully")
         except ValueError:
             print ("Data can't be fetch")
 
@@ -91,3 +100,6 @@ def short_text(text: str, max_lenght: int = 255) -> str:
         else:
             break
     return new_text
+
+
+
