@@ -14,6 +14,7 @@ from django.views.generic.edit import FormView
 from .forms import CSVUploadForm
 from django.contrib import messages
 from django.urls import reverse_lazy
+from pandas import DataFrame
 
 import matplotlib.pyplot as plt
 from io import BytesIO
@@ -23,36 +24,28 @@ import yfinance as yf
 import random
 import csv
 
-tickers = {
-    "AAPL": "Apple Inc.",
-    "MSFT": "Microsoft Corporation",
-    "AMZN": "Amazon.com, Inc.",
-    "GOOGL": "Alphabet Inc.",
-    "KO": "The Coca-Cola Company",
-    "PG": "Procter & Gamble Co.",
-    "GE": "General Electric Co.",
-    "JNJ": "Johnson & Johnson",
-    "V": "Visa Inc.",
-    "JPM": "JPMorgan Chase & Co.",
-    "META": "Meta Platforms, Inc.",
-    "TSLA": "Tesla, Inc.",
-    "AMZN": "Amazon.com, Inc.",
-    "NFLX": "Netflix, Inc.",
-    "GOOG": "Alphabet Inc.",
-    "INTC": "Intel Corporation",
-    "NVDA": "NVIDIA Corporation",
-    "ADBE": "Adobe Inc.",
-    "CSCO": "Cisco Systems, Inc.",
-    "PYPL": "PayPal Holdings, Inc."
-}
+def analize_by_moving_average_crossover_strategy(data: DataFrame) -> DataFrame:
 
-ticker_key_list = list(tickers.keys())
-middle = len(ticker_key_list) // 2
-ticker_list_one = ticker_key_list[middle:]
-ticker_list_two = ticker_key_list[:middle]
+    signals = DataFrame(index=data.index)
+    signals['price'] = data['Close']
+    signals['signal'] = 0.0
+    signals['rolling_mean'] = data['Close'].rolling(window=2).mean()
+    signals.loc[signals['price'] > signals['rolling_mean'], 'signal'] = 1.0
+    signals.loc[signals['price'] < signals['rolling_mean'], 'signal'] = -1.0
+    return signals
 
+def advice_move(signals):
+    last_signal = signals.iloc[-1]['signal']
 
-def get_stock_data(ticker: str, period: str = "1y", reverse: bool = False):
+    if last_signal >= 1.0:
+        return "BUY"
+    elif last_signal <= -1.0:
+        return "SELL"
+    else:
+        return "STAND BY"
+ 
+
+def get_stock_data(ticker: str, period: str="1y", reverse: bool=False) -> DataFrame:
     stock_data = yf.Ticker(ticker)
     data = stock_data.history(period=period)
     data["Growth"] = data["Close"] - data["Open"]
@@ -61,7 +54,7 @@ def get_stock_data(ticker: str, period: str = "1y", reverse: bool = False):
         data = reversed(data_list)
     return data
 
-def create_chart(data, ticker: Ticker, period: str = "1y"):
+def create_chart(data: DataFrame, ticker: Ticker, period: str = "1y") -> str:
     
     plt.figure(figsize=(12, 6))
     plt.plot(data.index, data["Close"], label="Open price", color="gold")
@@ -100,17 +93,21 @@ class IndexView(generic.TemplateView):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        ticker = self.request.GET.get('ticker_click')
-        if not ticker:
-            ticker = random.choice(ticker_list_one)
-        data = get_stock_data(ticker, reverse=True)
+        ticker_list = Ticker.objects.all().order_by('-capitalization')[:20]
+        ticker_dict_one = {ticker.ticker_name : ticker.company_name for ticker in ticker_list[:10]}
+        ticker_dict_two = {ticker.ticker_name : ticker.company_name for ticker in ticker_list[10:]}
+        ticker_dict_full = {**ticker_dict_one, **ticker_dict_two}
+        clicked_ticker = self.request.GET.get('ticker_click')
+        if not clicked_ticker:
+            clicked_ticker = random.choice(list(ticker_dict_full.keys()))
+        data = get_stock_data(clicked_ticker, reverse=True)
         markets = Market.objects.all()
         context["markets"] = markets
         context['data'] = data
-        context['tickers_one'] = ticker_list_one
-        context['tickers_two'] = ticker_list_two
-        context['ticker'] = ticker
-        context['company_name'] = tickers[ticker]
+        context['tickers_one'] = ticker_dict_one
+        context['tickers_two'] = ticker_dict_two
+        context['ticker'] = clicked_ticker
+        context['company_name'] = ticker_dict_full[clicked_ticker]
         return context
     
 class MarketReview(generic.DetailView):
@@ -138,6 +135,9 @@ class TickerReview(generic.DetailView):
         ticker = self.get_object()
         period = "1y"
         data = get_stock_data(ticker=ticker.ticker_name, period=period)
+        signals = analize_by_moving_average_crossover_strategy(data)
+        context['current_price'] = data.iloc[-1]['Close']
+        context['advice'] = advice_move(signals)
         context['chart'] = create_chart(data, ticker, period)
         return context
 
@@ -178,3 +178,15 @@ class CSVUploadView(FormView):
         return csv_data
 
 
+class AboutUs(generic.TemplateView):
+    
+    template_name = "getstocksapp/about_us.html"
+
+class Services(generic.TemplateView):
+
+    template_name = "getstocksapp/services.html"
+
+class Contact(generic.TemplateView):
+
+    template_name = "getstocksapp/contact.html"
+    

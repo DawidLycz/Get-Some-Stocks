@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>About us</title>
+</head>
+
+
+</html>
+{% load static %}
+
+<link rel="stylesheet" href="{% static 'getstocksapp/style.css' %}">
+<header>
+    <nav>
+        <ul>
+            <li><a href="{% url 'getstocksapp:home' %}">Homepage</a></li>
+            <li><a href="{% url 'getstocksapp:about_us' %}">About us</a></li>
+            <li><a href="{% url 'getstocksapp:services' %}">Services</a></li>
+            <li><a href="{% url 'getstocksapp:contact' %}">Contact</a></li>
+        </ul>
+    </nav>
+</header>
+
+<body>
+    <div>
+        <h2 style= "font-size: 90px; color: gold; text-align: center;">Contact</h2>
+        <p style= "font-size: 50px; color: gold; text-align: center;">E-mail: getsomestocks@post.com</p>
+        <p style= "font-size: 50px; color: gold; text-align: center;">Phone: 214247641258</p>
+        <p style= "font-size: 50px; color: gold; text-align: center;">Disclaimer: These are fake contacts</p>
+    </div>
+</body>

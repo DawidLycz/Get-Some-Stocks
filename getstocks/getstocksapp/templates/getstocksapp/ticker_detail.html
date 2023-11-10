@@ -2,7 +2,7 @@
 <html>
 
 <head>
-    <title>Market Review</title>
+    <title>Ticker Review</title>
 </head>
 
 
@@ -14,9 +14,9 @@
     <nav>
         <ul>
             <li><a href="{% url 'getstocksapp:home' %}">Homepage</a></li>
-            <li><a href="">About us</a></li>
-            <li><a href="">Services</a></li>
-            <li><a href="">Contact</a></li>
+            <li><a href="{% url 'getstocksapp:about_us' %}">About us</a></li>
+            <li><a href="{% url 'getstocksapp:services' %}">Services</a></li>
+            <li><a href="{% url 'getstocksapp:contact' %}">Contact</a></li>
         </ul>
     </nav>
 </header>
@@ -31,7 +31,11 @@
         {% endif %}
     </div>
     <div>
-        <img src="data:image/png;base64,{{ chart }}" alt="Wykres">
+        <img style="width: 100%; overflow: hidden;" src="data:image/png;base64,{{ chart }}" alt="Stock data">
+    </div>
+    <div>
+        <h2 style= "font-size: 90px; color: gold; text-align: center;">{{ current_price|floatformat:2 }} {{ ticker.currency }}</h2>
+        <a style= "font-size: 50px; color: gold; text-align: center;">Advice: {{ advice }}</a>
     </div>
 </body>
 
