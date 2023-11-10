@@ -1,15 +1,7 @@
 from typing import Any
-from django.db import models
-from django.shortcuts import get_object_or_404, render
-
-from django.http import HttpResponse, Http404, HttpResponseRedirect
-from django.template import loader
-from django.urls import reverse
-from django.utils import timezone
 from django.views import generic
 from .models import Market, Ticker
 from .forms import CSVUploadForm
-from django.http import JsonResponse
 from django.views.generic.edit import FormView
 from .forms import CSVUploadForm
 from django.contrib import messages
@@ -18,7 +10,6 @@ from pandas import DataFrame
 
 import matplotlib.pyplot as plt
 from io import BytesIO
-import urllib
 import base64
 import yfinance as yf
 import random
@@ -29,17 +20,22 @@ def analize_by_moving_average_crossover_strategy(data: DataFrame) -> DataFrame:
     signals = DataFrame(index=data.index)
     signals['price'] = data['Close']
     signals['signal'] = 0.0
-    signals['rolling_mean'] = data['Close'].rolling(window=2).mean()
+    signals['rolling_mean'] = data['Close'].rolling(window=20).mean()
     signals.loc[signals['price'] > signals['rolling_mean'], 'signal'] = 1.0
     signals.loc[signals['price'] < signals['rolling_mean'], 'signal'] = -1.0
+    data = signals['signal']
     return signals
 
-def advice_move(signals):
-    last_signal = signals.iloc[-1]['signal']
 
-    if last_signal >= 1.0:
+def advice_move(signals: DataFrame, ticks: int=3) -> None:
+    last_few_signals = signals.iloc[-ticks:]['signal']
+    counter = 0
+    for signal in last_few_signals:
+        counter += signal
+    average = counter / ticks
+    if average >= 1.0:
         return "BUY"
-    elif last_signal <= -1.0:
+    elif average <= -1.0:
         return "SELL"
     else:
         return "STAND BY"
@@ -53,6 +49,7 @@ def get_stock_data(ticker: str, period: str="1y", reverse: bool=False) -> DataFr
         data_list = list(data.iterrows())
         data = reversed(data_list)
     return data
+
 
 def create_chart(data: DataFrame, ticker: Ticker, period: str = "1y") -> str:
     
@@ -87,6 +84,7 @@ def create_chart(data: DataFrame, ticker: Ticker, period: str = "1y") -> str:
 
     return image_base64
 
+
 class IndexView(generic.TemplateView):
     
     template_name = "getstocksapp/index.html"
@@ -109,7 +107,8 @@ class IndexView(generic.TemplateView):
         context['ticker'] = clicked_ticker
         context['company_name'] = ticker_dict_full[clicked_ticker]
         return context
-    
+
+
 class MarketReview(generic.DetailView):
     model = Market
     template = "getstocksapp/market_detail.html"
@@ -126,6 +125,7 @@ class MarketReview(generic.DetailView):
         context['related_tickers'] = tickers
         return context
 
+
 class TickerReview(generic.DetailView):
     model = Ticker
     template = "getstocksapp/ticker_detail.html"
@@ -140,6 +140,7 @@ class TickerReview(generic.DetailView):
         context['advice'] = advice_move(signals)
         context['chart'] = create_chart(data, ticker, period)
         return context
+
 
 class CSVUploadView(FormView):
     template_name = 'getstocksapp/upload_csv.html'
@@ -182,9 +183,11 @@ class AboutUs(generic.TemplateView):
     
     template_name = "getstocksapp/about_us.html"
 
+
 class Services(generic.TemplateView):
 
     template_name = "getstocksapp/services.html"
+
 
 class Contact(generic.TemplateView):
 
