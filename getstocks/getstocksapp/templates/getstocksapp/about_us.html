@@ -1,29 +1,10 @@
-<!DOCTYPE html>
-<html>
+{% extends 'getstocksapp/base.html' %}
 
-<head>
-    <title>About us</title>
-</head>
+{% block title %}
+    About Us
+{% endblock %}
 
-
-</html>
-{% load static %}
-
-<link rel="stylesheet" href="{% static 'getstocksapp/style.css' %}">
-<header>
-    <nav>
-        <ul>
-            <li><a href="{% url 'getstocksapp:home' %}">Homepage</a></li>
-            <li><a href="{% url 'getstocksapp:about_us' %}">About us</a></li>
-            <li><a href="{% url 'getstocksapp:services' %}">Services</a></li>
-            <li><a href="{% url 'getstocksapp:contact' %}">Contact</a></li>
-        </ul>
-    </nav>
-</header>
-
-<body>
-    <div>
-        <h2 style= "font-size: 90px; color: gold; text-align: center;">About us</h2>
-        <a style= "font-size: 50px; color: gold; text-align: center;">Please note that project is made only in training purposes. Please don't take any actions based on advices you can receive here. </a>
-    </div>
-</body>
+{% block content %}
+    <h1>Abaut us</h1>
+    <a style= "font-size: 50px; color: gold; text-align: center;">Please note that project is made only in training purposes. Please don't take any actions based on advices you can receive here. </a>
+{% endblock %}

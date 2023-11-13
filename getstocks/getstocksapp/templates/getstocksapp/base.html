@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>{% block title %}Get some stocks{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'getstocksapp/style.css' %}">
+</head>
+
+    <header>
+        <nav>
+            <ul>
+                <li><a href="{% url 'getstocksapp:home' %}">Homepage</a></li>
+                <li><a href="{% url 'getstocksapp:about_us' %}">About us</a></li>
+                <li><a href="{% url 'getstocksapp:services' %}">Services</a></li>
+                <li><a href="{% url 'getstocksapp:contact' %}">Contact</a></li>
+            </ul>
+        </nav>
+    </header>
+
+<body>
+    {% block content %}{% endblock %}
+</body>
+
+</html>
+

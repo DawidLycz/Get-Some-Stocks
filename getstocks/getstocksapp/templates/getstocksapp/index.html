@@ -1,25 +1,10 @@
-<!DOCTYPE html>
-<html>
+{% extends 'getstocksapp/base.html' %}
 
-<head>
-    <title>Homepage</title>
-</head>
+{% block title %}
+    Homepage
+{% endblock %}
 
-
-</html>
-{% load static %}
-
-<link rel="stylesheet" href="{% static 'getstocksapp/style.css' %}">
-<header>
-    <nav>
-        <ul>
-            <li><a href="{% url 'getstocksapp:home' %}">Homepage</a></li>
-            <li><a href="{% url 'getstocksapp:about_us' %}">About us</a></li>
-            <li><a href="{% url 'getstocksapp:services' %}">Services</a></li>
-            <li><a href="{% url 'getstocksapp:contact' %}">Contact</a></li>
-        </ul>
-    </nav>
-</header>
+{% block content %}
 <div class="tools-panel">
     <ul>
         {% for market in markets %}
@@ -29,60 +14,53 @@
         {% endfor %}  
     </ul>
 </div>
-
-<body>
-    <div style="float: right;">
-        <iframe
-        src="https://sslecal2.investing.com?ecoDayBackground=%23280042&defaultFont=%23000000&innerBorderColor=%23000000&borderColor=%23240066&ecoDayFontColor=%23ff8c00&columns=exc_flags&features=datepicker,timezone&countries=25,32,6,37,72,22,17,39,14,10,35,43,53,56,36,110,11,26,12,4,5&calType=week&timeZone=8&lang=1"
-            width="400" height="500" frameborder="1" allowtransparency="true" marginwidth="0" marginheight="0"></iframe>
-    </div>
-    <div>
-        <p style="text-align: center; color: gold; font-size: 70px; margin-top: 0px;">POPULAR STOCKS:</p>
-        <ul style="list-style: none; display: flex; justify-content: center;">
-            {% for ticker in tickers_one %}
-            <li style="margin-right: 10px;">
-                <a href="{% url 'getstocksapp:home' %}?ticker_click={{ ticker }}" style="color: gold; font-size: 20px;">{{ ticker }}</a>
-            </li>
-            {% endfor %}
-        </ul>
-        <ul style="list-style: none; display: flex; justify-content: center;">
-            {% for ticker in tickers_two %}
-            <li style="margin-right: 10px;">
-                <a href="{% url 'getstocksapp:home' %}?ticker_click={{ ticker }}" style="color: gold; font-size: 20px;">{{ ticker }}</a>
-            </li>
-            {% endfor %}
-        </ul>
-    </div>
-    
-    
-    <table border="5" style="width: 40%; table-layout: auto; margin-left: 20%; border-color: #ff7c11; background-color: rgb(16, 0, 46);">
-        <h1 style="margin-left: 20%; font-size: 50px; color: gold;">{{ company_name }}</h1>
-        <tr>
-            <th>Date</th>
-            <th>Open</th>
-            <th>Max</th>
-            <th>Min</th>
-            <th>Close</th>
-            <th>Grown</th>
-        </tr>
-        {% for index, record in data %}
-        <tr>
-            <td>{{ record.name }}</td>
-            <td>{{ record.Open|floatformat:2 }} USD</td>
-            <td>{{ record.High|floatformat:2 }} USD</td>
-            <td>{{ record.Low|floatformat:2 }} USD</td>
-            <td>{{ record.Close|floatformat:2 }} USD</td>
-            {% if record.Growth > 0 %}
-                <td style="color: green;">+{{ record.Growth|floatformat:2 }} USD</td>
-            {% else %}
-                <td style="color: red;">{{ record.Growth|floatformat:2 }} USD</td>
-            {% endif %}
-        </tr>
+<div style="float: right;">
+    <iframe
+    src="https://sslecal2.investing.com?ecoDayBackground=%23280042&defaultFont=%23000000&innerBorderColor=%23000000&borderColor=%23240066&ecoDayFontColor=%23ff8c00&columns=exc_flags&features=datepicker,timezone&countries=25,32,6,37,72,22,17,39,14,10,35,43,53,56,36,110,11,26,12,4,5&calType=week&timeZone=8&lang=1"
+        width="400" height="500" frameborder="1" allowtransparency="true" marginwidth="0" marginheight="0"></iframe>
+</div>
+<div>
+    <p style="text-align: center; color: gold; font-size: 70px; margin-top: 0px;">POPULAR STOCKS:</p>
+    <ul style="list-style: none; display: flex; justify-content: center;">
+        {% for ticker in tickers_one %}
+        <li style="margin-right: 10px;">
+            <a href="{% url 'getstocksapp:home' %}?ticker_click={{ ticker }}" style="color: #ff7c11;; font-size: 20px;">{{ ticker }}</a>
+        </li>
         {% endfor %}
-    </table>
-    
+    </ul>
+    <ul style="list-style: none; display: flex; justify-content: center;">
+        {% for ticker in tickers_two %}
+        <li style="margin-right: 10px;">
+            <a href="{% url 'getstocksapp:home' %}?ticker_click={{ ticker }}" style="color: #ff7c11;; font-size: 20px;">{{ ticker }}</a>
+        </li>
+        {% endfor %}
+    </ul>
+</div>
 
 
-</body>
-
-
+<table border="5" style="width: 55%; table-layout: auto; margin-left: 10%; border-color: #ff7c11; background-color: rgb(16, 0, 46);">
+    <h1 style="margin-left: 10%; text-align: left; font-size: 50px; color: gold;">{{ company_name }}</h1>
+    <tr>
+        <th>Date</th>
+        <th>Open</th>
+        <th>Max</th>
+        <th>Min</th>
+        <th>Close</th>
+        <th>Grown</th>
+    </tr>
+    {% for index, record in data %}
+    <tr>
+        <td>{{ record.name|date:"m-d-Y" }}</td>
+        <td>{{ record.Open|floatformat:2 }} USD</td>
+        <td>{{ record.High|floatformat:2 }} USD</td>
+        <td>{{ record.Low|floatformat:2 }} USD</td>
+        <td>{{ record.Close|floatformat:2 }} USD</td>
+        {% if record.Growth > 0 %}
+            <td style="color: green;">+{{ record.Growth|floatformat:2 }} USD</td>
+        {% else %}
+            <td style="color: red;">{{ record.Growth|floatformat:2 }} USD</td>
+        {% endif %}
+    </tr>
+    {% endfor %}
+</table>
+{% endblock %}

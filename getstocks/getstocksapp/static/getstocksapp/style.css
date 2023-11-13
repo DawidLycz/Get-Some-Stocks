@@ -13,6 +13,12 @@ nav li {
     margin-right: 20px;
 }
 
+h1 {
+    color: gold;
+    text-align: center;
+    font-size: 90px;
+}
+
 a {
     text-decoration: none;
     color: #fff;
@@ -46,35 +52,13 @@ td {
 }
 
 .image-frame {
-    border: 6px solid #fa7000; /* Grubość i kolor ramki */
-    padding: 10px; /* Wewnętrzny odstęp od obrazu */
-    border-radius: 10px; /* Zaokrąglenie narożników ramki (opcjonalne) */
-}
-
-.green-rectangle {
-    width: 20px;
-    height: 20px;
-    background-color: green;
-}
-
-.yellow-rectangle {
-    width: 20px;
-    height: 20px;
-    background-color: yellow;
-}
-
-.red-rectangle {
-    width: 20px;
-    height: 20px;
-    background-color: red;
+    border: 6px solid #fa7000; 
+    padding: 10px; 
+    border-radius: 10px; 
 }
 
 #tools-panel {
     display: none;
 }
 
-.tools-toggle:hover + #tools-panel,
-.tools-toggle:active + #tools-panel {
-    display: block;
-}
 
