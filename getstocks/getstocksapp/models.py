@@ -34,7 +34,7 @@ class Ticker(models.Model):
     def __str__(self) -> str:
         return self.ticker_name
 
-    def download_data(self, *args, **kwargs):
+    def download_data(self):
         if not self.data_fetched:
             ticker_info = get_ticker_info_obj(self.ticker_name)
             self.company_name = ticker_info.company_name
@@ -49,9 +49,9 @@ class Ticker(models.Model):
             else:
                 self.capitalization = 0
             self.data_fetched= True
-            super().save(*args, **kwargs)
+            self.save()
 
-    def verify_full_data(self, *args, **kwargs):
+    def verify_full_data(self):
         d = NO_DATA
         self.full_data = all([
             self.company_name != d,
@@ -63,8 +63,8 @@ class Ticker(models.Model):
             self.address != d,
             self.capitalization != 0,]
         )
-        super().save(*args, **kwargs)
+        self.save()
     
-    def set_for_display(self, *args, **kwargs):
+    def set_for_display(self):
         self.for_display = True
-        super().save(*args, **kwargs)
+        self.save()

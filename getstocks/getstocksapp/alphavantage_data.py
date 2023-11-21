@@ -102,4 +102,3 @@ def short_text(text: str, max_lenght: int = 255) -> str:
     return new_text
 
 
-

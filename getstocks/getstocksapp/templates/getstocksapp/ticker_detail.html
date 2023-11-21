@@ -7,19 +7,45 @@
 {% block content %}
 
 <div>
-    <h1 style= "font-size: 90px; color: gold; text-align: center;">{{ ticker.company_name }}</h1>
+    <h1 style= "font-size: 600%; color: gold; text-align: center;">{{ ticker.company_name }}</h1>
     {% if ticker.company_description != "No data" %}
         <a style="font-size: 20px; color: gold;">{{ ticker.company_description|linebreaks }}</a>
     {% else %}
         <a style="font-size: 20px; color: gold;">No info avalible</a>
     {% endif %}
 </div>
+
 <div>
-    <img style="width: 100%; overflow: hidden;" src="data:image/png;base64,{{ chart }}" alt="Stock data">
+    <p style= "font-size: 70px; color: #ff7c11; text-align: center;">{{ current_price|floatformat:2 }} {{ ticker.currency }}</p>
+    
+
+    <div class="advice-container" style= "top: 47%; left: 10%;">
+        <img class="advisor-portrait" src="/static/getstocksapp/images/advisor_img1.png" alt="Advisor 1">
+        <div class="overlay-text">{{ advice_single_moving_average }}</div>
+        <div class="info-box" style="left: 100%; bottom: 0%">{{ info_single_moving_average }}</div>
+    </div>
+    <div class="advice-container" style= "top: 47%; right: 10%;">
+        <img class="advisor-portrait" src="/static/getstocksapp/images/advisor_img2.png" alt="Advisor 2">
+        <div class="overlay-text">{{ advice_double_moving_average }}</div>
+        <div class="info-box" style="right: 100%; bottom: 0%">{{ info_double_moving_average }}</div>
+    </div>
+    <div class="advice-container" style= "top: 85%; left: 10%;">
+        <img class="advisor-portrait" src="/static/getstocksapp/images/advisor_img3.png" alt="Advisor 3">
+        <div class="overlay-text">{{ advice_rsi }}</div>
+        <div class="info-box" style="left: 100%; top: 0%">{{ info_rsi }}</div>
+    </div>
+    <div class="advice-container" style= "top: 85%; right: 10%;">
+        <img class="advisor-portrait" src="/static/getstocksapp/images/advisor_img4.png" alt="Advisor 4">
+        <div class="overlay-text">{{ advice_mean_reversion }}</div>
+        <div class="info-box" style="right: 100%; top: 0%">{{ info_mean_reversion }}</div>
+    </div>
+    
+
+
 </div>
 <div>
-    <h2 style= "font-size: 90px; color: gold; text-align: center;">{{ current_price|floatformat:2 }} {{ ticker.currency }}</h2>
-    <a style= "font-size: 50px; color: gold; text-align: center;">Advice: {{ advice }}</a>
+    <img style="margin-top: 40%; width: 100%; overflow: hidden;" src="data:image/png;base64,{{ chart }}" alt="Stock data">
 </div>
+
 
 {% endblock %}

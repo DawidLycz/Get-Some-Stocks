@@ -1,54 +1,28 @@
 from typing import Any
-from django.views import generic
-from .models import Market, Ticker
-from .forms import CSVUploadForm
-from django.views.generic.edit import FormView
-from .forms import CSVUploadForm
-from django.contrib import messages
-from django.urls import reverse_lazy
-from pandas import DataFrame
-
-import matplotlib.pyplot as plt
+import csv
+import json
 from io import BytesIO
 import base64
-import yfinance as yf
 import random
-import csv
 
-def analize_by_moving_average_crossover_strategy(data: DataFrame) -> DataFrame:
+import matplotlib.pyplot as plt
+import yfinance as yf
+from pandas import DataFrame
 
-    signals = DataFrame(index=data.index)
-    signals['price'] = data['Close']
-    signals['signal'] = 0.0
-    signals['rolling_mean'] = data['Close'].rolling(window=20).mean()
-    signals.loc[signals['price'] > signals['rolling_mean'], 'signal'] = 1.0
-    signals.loc[signals['price'] < signals['rolling_mean'], 'signal'] = -1.0
-    data = signals['signal']
-    return signals
+from django.views import generic
+from django.views.generic.edit import FormView
+from django.contrib import messages
+from django.urls import reverse_lazy
+
+from .models import Market, Ticker
+from .forms import CSVUploadForm
+from .trade_logic import *
 
 
-def advice_move(signals: DataFrame, ticks: int=3) -> None:
-    last_few_signals = signals.iloc[-ticks:]['signal']
-    counter = 0
-    for signal in last_few_signals:
-        counter += signal
-    average = counter / ticks
-    if average >= 1.0:
-        return "BUY"
-    elif average <= -1.0:
-        return "SELL"
-    else:
-        return "STAND BY"
- 
+STRATEGY_DESCRIPTION_FILE = r"getstocks/getstocksapp/static/getstocksapp/strategy_descriptions.json"
 
-def get_stock_data(ticker: str, period: str="1y", reverse: bool=False) -> DataFrame:
-    stock_data = yf.Ticker(ticker)
-    data = stock_data.history(period=period)
-    data["Growth"] = data["Close"] - data["Open"]
-    if reverse:
-        data_list = list(data.iterrows())
-        data = reversed(data_list)
-    return data
+with open(STRATEGY_DESCRIPTION_FILE, "r") as stream:
+    strategies_info = json.load(stream)
 
 
 def create_chart(data: DataFrame, ticker: Ticker, period: str = "1y") -> str:
@@ -135,10 +109,21 @@ class TickerReview(generic.DetailView):
         ticker = self.get_object()
         period = "1y"
         data = get_stock_data(ticker=ticker.ticker_name, period=period)
-        signals = analize_by_moving_average_crossover_strategy(data)
+        signals_smas = analyze_by_single_moving_average_strategy(data)
+        signals_dmas = analyze_by_double_moving_averages_strategy(data)
+        signals_rsis = analyze_by_rsi_strategy(data)
+        signals_mrs = analyze_by_mean_reversion_strategy(data)
+        
         context['current_price'] = data.iloc[-1]['Close']
-        context['advice'] = advice_move(signals)
         context['chart'] = create_chart(data, ticker, period)
+        context['advice_single_moving_average'] = advice_move(signals_smas)
+        context['advice_double_moving_average'] = advice_move(signals_dmas)
+        context['advice_rsi'] = advice_move(signals_rsis)
+        context['advice_mean_reversion'] = advice_move(signals_mrs)
+        context['info_single_moving_average'] = strategies_info["single_moving_average"]
+        context['info_double_moving_average'] = strategies_info["double_moving_average"]
+        context['info_rsi'] = strategies_info["rsi"]
+        context['info_mean_reversion'] = strategies_info["mean_reversion"]
         return context
 
 
