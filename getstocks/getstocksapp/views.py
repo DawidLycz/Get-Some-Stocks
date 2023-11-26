@@ -25,6 +25,7 @@ with open(STRATEGY_DESCRIPTION_FILE, "r") as stream:
     strategies_info = json.load(stream)
 
 
+
 def create_chart(data: DataFrame, ticker: Ticker, period: str = "1y") -> str:
     
     plt.figure(figsize=(12, 6))
@@ -87,18 +88,39 @@ class MarketReview(generic.DetailView):
     model = Market
     template = "getstocksapp/market_detail.html"
 
+        
     def get_context_data(self, **kwargs):
+
+        def find_prefix(word: str, current_sorter: str) -> str:
+            '''Function takes word, and checks if it's the same as current_sorter.
+            If it is, it returns "-".'''
+            if word == current_sorter:
+                return "-"
+            else:
+                return ""
+            
         context = super().get_context_data(**kwargs)
         market = self.get_object()
         tickers = Ticker.objects.filter(origin_market=market)
         tickers = Ticker.objects.filter(data_fetched=True)
-        sort_by = self.request.GET.get('sort_by')
-        if not sort_by:
-            sort_by = 'company_name'
-        tickers = tickers.order_by(sort_by)
-        context['related_tickers'] = tickers
-        return context
+        sorter= self.request.GET.get('sort_by')
+        
+        if not sorter:
+            sorter = 'company_name'
 
+        tickers = tickers.order_by(sorter)
+        context['table_columns'] = [
+            ('ticker_name', 'Ticker'), 
+            ('company_name', 'Name'), 
+            ('sector', 'Sector'), 
+            ('industry', 'Industry'), 
+            ('capitalization', 'Market Capitalization')
+            ]
+        context['related_tickers'] = tickers
+        context['current_sorter'] = sorter
+        context['find_prefix'] = find_prefix
+        return context
+    
 
 class TickerReview(generic.DetailView):
     model = Ticker

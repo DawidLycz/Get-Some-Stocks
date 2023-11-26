@@ -16,14 +16,20 @@ from django.http import HttpResponseRedirect
 from django.contrib import admin
 from .models import Market
 
+from admin_extra_buttons.api import ExtraButtonsMixin, button, confirm_action, link, view
+from admin_extra_buttons.utils import HttpResponseRedirectToReferrer
+from django.http import HttpResponse, JsonResponse
+from django.contrib import admin
+from django.views.decorators.clickjacking import xframe_options_sameorigin
+from django.views.decorators.csrf import csrf_exempt
+
 class CustomAdminSite(admin.sites.AdminSite):
     site_header = "Get Some Stocks"
     
     def custom_link(self, request):
         return(HttpResponseRedirect('upload_csv'))
 
-
-class MarketAdmin(admin.ModelAdmin):
+class MarketAdmin(ExtraButtonsMixin, admin.ModelAdmin):
     list_display = ('name', 'logo_thumbnail') 
     search_fields = ['name']  
     list_filter = ['name'] 
@@ -35,11 +41,18 @@ class MarketAdmin(admin.ModelAdmin):
 
     logo_thumbnail.short_description = 'Logo'
 
-from django.contrib import admin
-from .models import Ticker
+
+    @link(change_list=False, html_attrs={'target': '_new', 'style': 'background-color:var(--button-bg)'})
+    def upload_csv(self, button):
+        original = button.context['original']
+        button.label = f"Upload CSV data for {original.name}."
+        button.href = reverse('getstocksapp:upload_csv')
+
+
 
 class TickerAdmin(admin.ModelAdmin):
     
+    search_fields = ['ticker_name'] 
     list_display = ('ticker_name', 'company_name', 'origin_market', 'data_fetched', 'full_data', 'for_display')
     list_filter = ['origin_market','data_fetched', 'full_data', 'for_display']
     ordering = ['ticker_name']

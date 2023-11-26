@@ -32,6 +32,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'getstocksapp.apps.GetstocksappConfig',
+    'admin_extra_buttons',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
