@@ -41,10 +41,14 @@
     </div>
     
 
-
 </div>
-<div>
-    <img style="margin-top: 40%; width: 100%; overflow: hidden;" src="data:image/png;base64,{{ chart }}" alt="Stock data">
+<div class="chart-container">
+    <div class=chart-header>
+        {% for width, title, period in chart_periods %}
+            <a class="chart-button" style="left: {{width}}%;" href="{% url 'getstocksapp:tickerreview' ticker.id %}?period={{period}}">{{title}}</a> 
+        {% endfor %}
+    </div>
+    <img style="margin-top: 10%; width: 100%; overflow: hidden;" src="data:image/png;base64,{{ chart }}" alt="Stock data">
 </div>
 
 

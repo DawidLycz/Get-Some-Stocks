@@ -129,13 +129,27 @@ class TickerReview(generic.DetailView):
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         ticker = self.get_object()
-        period = "1y"
+        period = self.request.GET.get('period')
+        if not period:
+            period = "1y"
         data = get_stock_data(ticker=ticker.ticker_name, period=period)
         signals_smas = analyze_by_single_moving_average_strategy(data)
         signals_dmas = analyze_by_double_moving_averages_strategy(data)
         signals_rsis = analyze_by_rsi_strategy(data)
         signals_mrs = analyze_by_mean_reversion_strategy(data)
-        
+        context['chart_periods'] = [
+            (0, "All times", "max"),
+            (10, "10 Years", "10y"), 
+            (20, "5 Years", "5y"),
+            (30, "2 Years", "2y"),
+            (40, "1 Year", "1y"),
+            (50, "6 Months", "6mo"),
+            (60, "3 Months", "3mo"),
+            (70, "1 Month", "1mo"),
+            (80, "5 Days", "5d"),
+            (90, "1 Day", "1d")
+            ]
+
         context['current_price'] = data.iloc[-1]['Close']
         context['chart'] = create_chart(data, ticker, period)
         context['advice_single_moving_average'] = advice_move(signals_smas)
