@@ -22,6 +22,10 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-6_h+ydj6nzal@^s@1!(roy0+)^20df1^aqv96zxg$!hu7^q_50'
 
+APLHAVANTAGE_API_KEY = '4KL6FXFAI196YG5S'
+DATABASE_PASSWORD = 'Y7y7y7y7!!'
+
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -80,7 +84,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'getstock_db',
         'USER': 'getstocks_admin',
-        'PASSWORD': 'Y7y7y7y7!!',
+        'PASSWORD': DATABASE_PASSWORD,
         'HOST': 'localhost',
         'PORT': '3306',
     

@@ -24,8 +24,6 @@ STRATEGY_DESCRIPTION_FILE = r"getstocks/getstocksapp/static/getstocksapp/strateg
 with open(STRATEGY_DESCRIPTION_FILE, "r") as stream:
     strategies_info = json.load(stream)
 
-
-
 def create_chart(data: DataFrame, ticker: Ticker, period: str = "1y") -> str:
     
     plt.figure(figsize=(12, 6))

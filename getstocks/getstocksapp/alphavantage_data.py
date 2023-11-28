@@ -1,8 +1,11 @@
 from alpha_vantage.fundamentaldata import FundamentalData
+import logging
+from getstocks.settings import APLHAVANTAGE_API_KEY
 
-api_key = '4KL6FXFAI196YG5S'
+fd = FundamentalData(key=APLHAVANTAGE_API_KEY)
 
-fd = FundamentalData(key=api_key)
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class TickerInfo:
     def __init__(
@@ -67,9 +70,9 @@ class TickerInfo:
                     self.capitalization = 0
             else:
                 self.capitalization = 0
-            print ("Data fetched successfully")
+            logger.info("Data fetched successfully")
         except ValueError:
-            print ("Data can't be fetch")
+            logger.warning("Data can't be fetch")
 
 
     def get_particular_info(ticker: str, key: str) -> str:
