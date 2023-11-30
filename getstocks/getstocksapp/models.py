@@ -1,5 +1,5 @@
 from django.db import models
-from .alphavantage_data import get_ticker_info_obj
+from .data_downloaders.alphavantage_data import get_ticker_info_obj
 
 NO_DATA = "No data"
 

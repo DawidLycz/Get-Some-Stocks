@@ -1,2 +1,3 @@
 playground.py
-getstocks/getstocksapp/__pycache__/
+getstocks/getstocksapp/__pycache__
+getstocks/getstocksapp/migrations/__pycache__

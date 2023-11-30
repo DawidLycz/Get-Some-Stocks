@@ -17,6 +17,8 @@ from django.urls import reverse_lazy
 from .models import Market, Ticker
 from .forms import CSVUploadForm
 from .trade_logic import *
+from .data_downloaders.yfinance_data import get_stock_data
+
 
 
 STRATEGY_DESCRIPTION_FILE = r"getstocks/getstocksapp/static/getstocksapp/strategy_descriptions.json"

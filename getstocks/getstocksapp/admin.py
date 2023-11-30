@@ -1,33 +1,19 @@
-from django.contrib import admin
-from .models import Market, Ticker
-from .alphavantage_data import get_ticker_info_obj
-from django.utils.safestring import mark_safe
-
-import pandas as pd
-from django.http import HttpResponse
-from django.urls import path
 from django import forms
 from django.contrib import admin
-from .models import Ticker
-import csv
-from django.urls import reverse
-from django.http import HttpResponseRedirect
-
-from django.contrib import admin
-from .models import Market
-
-from admin_extra_buttons.api import ExtraButtonsMixin, button, confirm_action, link, view
-from admin_extra_buttons.utils import HttpResponseRedirectToReferrer
 from django.http import HttpResponse, JsonResponse
-from django.contrib import admin
+from django.urls import path, reverse
+from django.utils.safestring import mark_safe
 from django.views.decorators.clickjacking import xframe_options_sameorigin
 from django.views.decorators.csrf import csrf_exempt
 
-class CustomAdminSite(admin.sites.AdminSite):
-    site_header = "Get Some Stocks"
-    
-    def custom_link(self, request):
-        return(HttpResponseRedirect('upload_csv'))
+import pandas as pd
+
+from admin_extra_buttons.api import ExtraButtonsMixin, button, confirm_action, link, view
+from admin_extra_buttons.utils import HttpResponseRedirectToReferrer
+
+from .data_downloaders.alphavantage_data import get_ticker_info_obj
+
+from .models import Market, Ticker
 
 class MarketAdmin(ExtraButtonsMixin, admin.ModelAdmin):
     list_display = ('name', 'logo_thumbnail') 
@@ -98,4 +84,3 @@ class TickerAdmin(admin.ModelAdmin):
 
 admin.site.register(Market, MarketAdmin)
 admin.site.register(Ticker, TickerAdmin)
-custom_admin_site = CustomAdminSite(name='custom_admin')

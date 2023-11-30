@@ -1,8 +1,6 @@
 from pandas import DataFrame
 import yfinance as yf
 
-DEF_TICKER = "AAPL"
-
 def analyze_by_single_moving_average_strategy(data: DataFrame, window: int=5) -> DataFrame:
     '''
     Function creates new column called signal.
@@ -73,7 +71,11 @@ def analyze_by_mean_reversion_strategy(data: DataFrame, sell_multiplier: float=1
     return signals
 
 
-def advice_move(signals: DataFrame, ticks: int=3) -> None:
+def advice_move(signals: DataFrame, ticks: int=3) -> str:
+    '''
+    Functions takes data frame with signal column and calculates average of last few signals (default 3).
+    Based on this average, it returns string with advice of next operation.
+    '''
     
     last_few_signals = signals.iloc[-ticks:]['signal']
     average = round(last_few_signals.mean(), 2)
@@ -84,13 +86,6 @@ def advice_move(signals: DataFrame, ticks: int=3) -> None:
     else:
         return "STAND BY"
 
-def get_stock_data(ticker: str, period: str="1y", reverse: bool=False) -> DataFrame:
-    stock_data = yf.Ticker(ticker)
-    data = stock_data.history(period=period)
-    data["Growth"] = data["Close"] - data["Open"]
-    if reverse:
-        data_list = list(data.iterrows())
-        data = reversed(data_list)
-    return data
+
 
 
