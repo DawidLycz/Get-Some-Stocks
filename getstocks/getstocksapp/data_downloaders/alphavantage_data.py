@@ -1,68 +1,41 @@
 from alpha_vantage.fundamentaldata import FundamentalData
 import logging
-from getstocks.settings import APLHAVANTAGE_API_KEY
+# from getstocks.getstocks.settings import APLHAVANTAGE_API_KEY
+from dataclasses import dataclass
+
+APLHAVANTAGE_API_KEY = '4KL6FXFAI196YG5S'
 
 fd = FundamentalData(key=APLHAVANTAGE_API_KEY)
 
-logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
+@dataclass
 class TickerInfo:
-    def __init__(
-        self,
-        ticker: str,
-        company_name: str="No data",
-        description: str="No data",
-        currency: str="No data",
-        country: str="No data",
-        sector: str="No data",
-        industry: str="No data",
-        exchange: str="No data",
-        address: str="No data",
-        capitalization : int=0,
-    ):
-        self.ticker = ticker
-        self.company_name = company_name
-        self.description = description
-        self.currency = currency
-        self.country = country
-        self.sector = sector
-        self.industry = industry
-        self.exchange = exchange
-        self.address = address
-        self.capitalization = capitalization
-    
-    def __str__(self):
-        return self.ticker
-    
-    def __repr__(self):
-        return f"({self.company_name}, {self.description}, {self.currency}, {self.country}, {self.sector}, {self.industry}, {self.exchange}, {self.address}, {self.capitalization})"
-
+    ticker: str
+    company_name: str="No data"
+    description: str="No data"
+    currency: str="No data"
+    country: str="No data"
+    sector: str="No data"
+    industry: str="No data"
+    exchange: str="No data"
+    address: str="No data"
+    capitalization : int=0
 
     def get_all_info(self):
         try:
             api_info, meta_data = fd.get_company_overview(symbol=self.ticker)
-            if api_info["Name"]:
-                self.company_name = api_info["Name"]
-            if api_info["Description"]:
-                if api_info["Description"] == "None":
-                    self.description = "No data"
-                else:
-                    self.description = short_text(api_info["Description"])
-            if api_info["Currency"]:
-                self.currency = api_info["Currency"]
-            if api_info["Country"]:
-                self.country = api_info["Country"]
-            if api_info["Sector"]:
-                self.sector = api_info["Sector"]
-            if api_info["Industry"]:
-                self.industry = api_info["Industry"]
-            if api_info["Industry"]:
-                self.industry = api_info["Industry"]
-            if api_info["Exchange"]:
-                self.exchange = api_info["Exchange"]
-            if api_info["Address"]:
-                self.address = api_info["Address"]
+            self.company_name = api_info.get("Name", "No Data")
+            if api_info["Description"] not in ["None.", "None", ""]:  
+                self.description = short_text(api_info["Description"])
+            else:
+                self.description = "No data"
+            self.currency = api_info.get("Currency", "No Data")
+            self.country = api_info.get("Country", "No Data")
+            self.sector = api_info.get("Sector", "No Data")
+            self.industry = api_info.get("Industry", "No Data")
+            self.exchange = api_info.get("Exchange", "No Data")
+            self.address = api_info.get("Address", "No Data")
             if api_info["MarketCapitalization"]:
                 try:
                     self.capitalization = int(api_info["MarketCapitalization"])
@@ -74,15 +47,17 @@ class TickerInfo:
         except ValueError:
             logger.warning("Data can't be fetch")
 
-
     def get_particular_info(ticker: str, key: str) -> str:
+
         try:
             company_data, meta_data = fd.get_company_overview(symbol=ticker)
             return short_text(company_data[key])
         except KeyError:
-            return "NO DATA"
+            logger.warning(f"Can't find '{key}' in api")
+            return "No Data"
         except ValueError:
-            return "WRONG TICKER"
+            logger.warning(f"Ticker: '{ticker}' is incorrect")
+            return "No Data"
 
 
 def get_ticker_info_obj(ticker: str) -> TickerInfo:

@@ -1,3 +1,7 @@
 playground.py
+debug.log
+getstocks/getstocks/__pycache__
 getstocks/getstocksapp/__pycache__
 getstocks/getstocksapp/migrations/__pycache__
+getstocks/getstocksapp/data_downloaders/__pycache__
+getstocks/getstocksapp/data_downloaders/__pycache__
