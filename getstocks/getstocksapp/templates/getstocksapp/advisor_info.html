@@ -1,0 +1,16 @@
+{% extends 'getstocksapp/base.html' %}
+
+{% block title %}
+    Services
+{% endblock %}
+
+{% block content %}
+    <div>
+        <img class="big-advisor-portrait" src= {{ advisor_image_url }} alt="Advisor 1">
+    </div>
+    <div style="margin-left: 50%; margin-top: 0%; margin-right: 20%; position: absolute;">
+        <h1 style="white-space: nowrap">{{ title }}</h1>
+        <a style="font-size: 160%; color: gold">{{ advisor_info }}</a>
+        
+    </div>
+{% endblock %}

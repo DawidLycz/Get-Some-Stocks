@@ -9,6 +9,7 @@ class Market(models.Model):
     description = models.TextField(default='', blank=True)
     website = models.URLField(default='', blank=True)
 
+
     def __str__(self) -> str:
         return self.name
 
@@ -16,7 +17,7 @@ class Market(models.Model):
 class Ticker(models.Model):
     ticker_name = models.CharField(max_length=200)
     company_name = models.CharField(max_length=255, default=NO_DATA)
-    company_description = models.CharField(max_length=255, default=NO_DATA)
+    company_description = models.TextField(default='', blank=True)
     currency = models.CharField(max_length=255, default=NO_DATA)
     sector = models.CharField(max_length=255, default=NO_DATA)
     industry = models.CharField(max_length=255, default=NO_DATA)
@@ -58,7 +59,7 @@ class Ticker(models.Model):
             self.company_description != d,
             self.currency != d,
             self.sector != d,
-            self.industry !=d,
+            self.industry != d,
             self.exchange != d,
             self.address != d,
             self.capitalization != 0,]
@@ -67,4 +68,12 @@ class Ticker(models.Model):
     
     def set_for_display(self):
         self.for_display = True
+        self.save()
+    
+    def do_desc(self):
+        self.temp_description = self.company_description
+        self.save()
+    
+    def do_desc2(self):
+        self.company_description = self.temp_description
         self.save()

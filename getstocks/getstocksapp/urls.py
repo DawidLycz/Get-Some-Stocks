@@ -12,6 +12,7 @@ urlpatterns = [
     path('upload_csv', views.CSVUploadView.as_view(), name='upload_csv'),
     path('about', views.AboutUs.as_view(), name = 'about_us'),
     path('services', views.Services.as_view(), name = 'services'),
-    path('contact', views.Contact.as_view(), name = 'contact')
+    path('contact', views.Contact.as_view(), name = 'contact'),
+    path('advisor_info', views.AdvisorInfo.as_view(), name = 'advisor_info')
 ]
 

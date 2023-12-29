@@ -18,27 +18,34 @@
 <div>
     <p style= "font-size: 70px; color: #ff7c11; text-align: center;">{{ current_price|floatformat:2 }} {{ ticker.currency }}</p>
     
-
-    <div class="advice-container" style= "top: 47%; left: 10%;">
-        <img class="advisor-portrait" src="/static/getstocksapp/images/advisor_img1.png" alt="Advisor 1">
-        <div class="overlay-text">{{ advice_single_moving_average }}</div>
-        <div class="info-box" style="left: 100%; bottom: 0%">{{ info_single_moving_average }}</div>
-    </div>
-    <div class="advice-container" style= "top: 47%; right: 10%;">
-        <img class="advisor-portrait" src="/static/getstocksapp/images/advisor_img2.png" alt="Advisor 2">
-        <div class="overlay-text">{{ advice_double_moving_average }}</div>
-        <div class="info-box" style="right: 100%; bottom: 0%">{{ info_double_moving_average }}</div>
-    </div>
-    <div class="advice-container" style= "top: 85%; left: 10%;">
-        <img class="advisor-portrait" src="/static/getstocksapp/images/advisor_img3.png" alt="Advisor 3">
-        <div class="overlay-text">{{ advice_rsi }}</div>
-        <div class="info-box" style="left: 100%; top: 0%">{{ info_rsi }}</div>
-    </div>
-    <div class="advice-container" style= "top: 85%; right: 10%;">
-        <img class="advisor-portrait" src="/static/getstocksapp/images/advisor_img4.png" alt="Advisor 4">
-        <div class="overlay-text">{{ advice_mean_reversion }}</div>
-        <div class="info-box" style="right: 100%; top: 0%">{{ info_mean_reversion }}</div>
-    </div>
+    <a href="{% url 'getstocksapp:advisor_info' %}?advisor=Single_moving_average">
+        <div class="advice-container" style= "top: 47%; left: 10%;">
+            <img class="advisor-portrait" src="/static/getstocksapp/images/advisor_img1.png" alt="Advisor 1">
+            <div class="overlay-text">{{ advice_single_moving_average }}</div>
+            <div class="overlay-text-top">Single moving average</div>
+        </div>
+    </a>
+    <a href="{% url 'getstocksapp:advisor_info' %}?advisor=Double_moving_average">
+        <div class="advice-container" style= "top: 47%; right: 10%;">
+            <img class="advisor-portrait" src="/static/getstocksapp/images/advisor_img2.png" alt="Advisor 2">
+            <div class="overlay-text">{{ advice_double_moving_average }}</div>
+            <div class="overlay-text-top">Double moving average</div>
+        </div>
+    </a>
+    <a href="{% url 'getstocksapp:advisor_info' %}?advisor=RSI">
+        <div class="advice-container" style= "top: 85%; left: 10%;">
+            <img class="advisor-portrait" src="/static/getstocksapp/images/advisor_img3.png" alt="Advisor 3">
+            <div class="overlay-text">{{ advice_rsi }}</div>
+            <div class="overlay-text-top">RSI</div>
+        </div>
+    </a>
+    <a href="{% url 'getstocksapp:advisor_info' %}?advisor=Mean_reversion">
+        <div class="advice-container" style= "top: 85%; right: 10%;">
+            <img class="advisor-portrait" src="/static/getstocksapp/images/advisor_img4.png" alt="Advisor 4">
+            <div class="overlay-text">{{ advice_mean_reversion }}</div>
+            <div class="overlay-text-top">Mean reversion</div>
+        </div>
+    </a>
     
 
 </div>

@@ -27,7 +27,7 @@ a {
 body {
     margin: 0;
     padding: 0;
-    background: rgb(0, 0, 0) url("images/background.png") repeat;
+    background: rgb(0, 0, 0) url("images/background3.png") repeat;
     background-attachment: fixed;
     background-size: cover;
 }
@@ -74,6 +74,15 @@ td {
     display: block;
 }
 
+.big-advisor-portrait {
+    margin-left: 5%;
+    margin-top: 5%;
+    width: 35%;
+    border: 5px solid gold; 
+    display: block;
+    position: absolute
+}
+
 .overlay-text {
     position: absolute;
     bottom: 0px;
@@ -86,11 +95,21 @@ td {
     white-space: nowrap;
 }
 
+.overlay-text-top {
+    position: absolute;
+    top: 5px;
+    left: 50%;
+    color: gold;
+    transform: translate(-50%, 0);
+    font-size: 120%;
+    transition: opacity 0.3s ease-in-out;
+    opacity: 1;
+    white-space: nowrap;
+}
+
 
 .info-box{
     position: absolute;
-    width: 200%;
-    height: 90%;
     background-color: rgb(16, 0, 46);
     color: gold;
     border: 5px solid #ff7c11;

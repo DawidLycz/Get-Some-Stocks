@@ -87,6 +87,9 @@ DATABASES = {
         'PASSWORD': DATABASE_PASSWORD,
         'HOST': 'localhost',
         'PORT': '3306',
+        'TEST': {
+            'NAME': 'test_getstock_db',
+        },
     
 }
     }
@@ -152,7 +155,7 @@ LOGGING = {
     },
     'loggers': {
         'django': {
-            'handlers': ['file', 'console'],
+            'handlers': ['file'],
             'level': 'DEBUG',
             'propagate': True,
         },

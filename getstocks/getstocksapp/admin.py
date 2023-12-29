@@ -74,8 +74,7 @@ class TickerAdmin(admin.ModelAdmin):
         for ticker in querryset:
             ticker.verify_full_data()
         self.message_user(request, "Data has been verified. Tickers with full data has been marked")
-
-
+        
     mark_unfetch.short_description = "Mark unfetched"
     fetch_data.short_description = "Fetch data"
     verify_data.short_description = "Verify if data in database"

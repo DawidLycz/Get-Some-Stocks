@@ -1,11 +1,9 @@
 from alpha_vantage.fundamentaldata import FundamentalData
 import logging
-# from getstocks.getstocks.settings import APLHAVANTAGE_API_KEY
+from django.conf import settings
 from dataclasses import dataclass
 
-APLHAVANTAGE_API_KEY = '4KL6FXFAI196YG5S'
-
-fd = FundamentalData(key=APLHAVANTAGE_API_KEY)
+fd = FundamentalData(key=settings.APLHAVANTAGE_API_KEY)
 
 logger = logging.getLogger(__name__)
 
@@ -27,7 +25,7 @@ class TickerInfo:
             api_info, meta_data = fd.get_company_overview(symbol=self.ticker)
             self.company_name = api_info.get("Name", "No Data")
             if api_info["Description"] not in ["None.", "None", ""]:  
-                self.description = short_text(api_info["Description"])
+                self.description = (api_info["Description"])
             else:
                 self.description = "No data"
             self.currency = api_info.get("Currency", "No Data")
@@ -51,7 +49,7 @@ class TickerInfo:
 
         try:
             company_data, meta_data = fd.get_company_overview(symbol=ticker)
-            return short_text(company_data[key])
+            return (company_data[key])
         except KeyError:
             logger.warning(f"Can't find '{key}' in api")
             return "No Data"
@@ -65,18 +63,5 @@ def get_ticker_info_obj(ticker: str) -> TickerInfo:
     obj.get_all_info()
     return obj
 
-
-def short_text(text: str, max_lenght: int = 255) -> str:
-    sentences = text.split(". ")
-    new_text = ""
-    total_lenght = 0
-    for sentence in sentences:
-        sentence += ". "
-        if total_lenght + len(sentence) <= max_lenght:
-            total_lenght += len(sentence)
-            new_text += sentence
-        else:
-            break
-    return new_text
 
 

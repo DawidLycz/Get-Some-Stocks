@@ -103,7 +103,7 @@ class MarketReview(generic.DetailView):
         market = self.get_object()
         tickers = Ticker.objects.filter(origin_market=market)
         tickers = Ticker.objects.filter(data_fetched=True)
-        sorter= self.request.GET.get('sort_by')
+        sorter = self.request.GET.get('sort_by')
         
         if not sorter:
             sorter = 'company_name'
@@ -213,4 +213,36 @@ class Services(generic.TemplateView):
 class Contact(generic.TemplateView):
 
     template_name = "getstocksapp/contact.html"
-    
+
+
+class AdvisorInfo(generic.TemplateView):
+
+    template_name = "getstocksapp/advisor_info.html"
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        
+        context = super().get_context_data(**kwargs)
+        advisor = self.request.GET.get('advisor')
+        match advisor:
+            case "Single_moving_average":
+                advisor_info = strategies_info["single_moving_average"]
+                advisor_image_url = "/static/getstocksapp/images/advisor_img1.png"
+            case "Double_moving_average":
+                advisor_info = strategies_info["double_moving_average"]
+                advisor_image_url = "/static/getstocksapp/images/advisor_img2.png"
+            case "RSI":
+                advisor_info = strategies_info["rsi"]
+                advisor_image_url = "/static/getstocksapp/images/advisor_img3.png"
+            case "Mean_reversion":
+                advisor_info = strategies_info["mean_reversion"]
+                advisor_image_url = "/static/getstocksapp/images/advisor_img4.png"
+            case _:
+                advisor = "Unknown"
+                advisor_info = "Unknown Advisor"
+                advisor_image_url = "/static/getstocksapp/images/advisor_img1.png"
+        
+        context["title"] = advisor.replace("_", " ")
+        context["advisor_info"] = advisor_info
+        context["advisor_image_url"] = advisor_image_url
+        return context
+
