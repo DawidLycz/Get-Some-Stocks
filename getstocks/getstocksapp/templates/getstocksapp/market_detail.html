@@ -10,29 +10,33 @@
     <a style="font-size: 20px; color: gold;">{{ market.description|linebreaks }}</a>
     <a href="{{ market.website }}" style=" font-size: 30px; color: rgb(255, 102, 0);">Visit {{ market.name }} website</a>
 </div>
-<table border="5" style="border-color: #ff7c11; background-color: rgb(16, 0, 46);">
-    <h1 style="text-align: center; font-size: 50px; color: gold;">STOCKS</h1>
-    <tr>
-        {% for sorter, name in table_columns %}
-            {% if sorter == current_sorter %}
-                <th><a style="color: rgb(255, 102, 0);" href="{% url 'getstocksapp:marketreview' market.id %}?sort_by=-{{sorter}}">{{name}}</a></th>
-            {% else %}
-                <th><a style="color: rgb(255, 102, 0);" href="{% url 'getstocksapp:marketreview' market.id %}?sort_by={{sorter}}">{{name}}</a></th>
-            {% endif %}
-        {% endfor %}
-        <th width=200px>Move</th>
-    </tr>{% for ticker in related_tickers %}
-    {% if ticker.for_display %}
-    <tr>
-        <td>{{ ticker.ticker_name }}</td>
-        <td>{{ ticker.company_name }}</td>
-        <td>{{ ticker.sector }}</td>
-        <td>{{ ticker.industry }}</td>
-        <td>{{ ticker.capitalization }} USD</td>
-        <td style=" text-align: center;"><a style="color: green;" href="{% url 'getstocksapp:tickerreview' ticker.id %}">DETAILS</a> </td>
+{% if related_tickers %}
+    <table border="5" style="width:100%; border-color: #ff7c11; background-color: rgb(16, 0, 46);">
+        <h1 style="text-align: center; font-size: 50px; color: gold;">STOCKS</h1>
+        <tr>
+            {% for sorter, name in table_columns %}
+                {% if sorter == current_sorter %}
+                    <th><a style="color: rgb(255, 102, 0);" href="{% url 'getstocksapp:marketreview' market.id %}?sort_by=-{{sorter}}">{{name}}</a></th>
+                {% else %}
+                    <th><a style="color: rgb(255, 102, 0);" href="{% url 'getstocksapp:marketreview' market.id %}?sort_by={{sorter}}">{{name}}</a></th>
+                {% endif %}
+            {% endfor %}
+            <th width=200px>Move</th>
+        </tr>{% for ticker in related_tickers %}
+        {% if ticker.for_display %}
+        <tr>
+            <td>{{ ticker.ticker_name }}</td>
+            <td>{{ ticker.company_name }}</td>
+            <td>{{ ticker.sector }}</td>
+            <td>{{ ticker.industry }}</td>
+            <td>{{ ticker.capitalization }} USD</td>
+            <td style=" text-align: center;"><a style="color: green;" href="{% url 'getstocksapp:tickerreview' ticker.id %}">DETAILS</a> </td>
 
-    </tr>
-    {% endif %}
-    {% endfor %}
-</table>
+        </tr>
+        {% endif %}
+        {% endfor %}
+    </table>
+{% else %}
+    <p style="text-align: center; font-size: 300%; color:gold">No tickers available for this market yet.</p>
+{% endif %}
 {% endblock %}

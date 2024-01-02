@@ -3,6 +3,8 @@ import logging
 from django.conf import settings
 from dataclasses import dataclass
 
+# APLHAVANTAGE_API_KEY = '4KL6FXFAI196YG5S'
+
 fd = FundamentalData(key=settings.APLHAVANTAGE_API_KEY)
 
 logger = logging.getLogger(__name__)
@@ -63,5 +65,8 @@ def get_ticker_info_obj(ticker: str) -> TickerInfo:
     obj.get_all_info()
     return obj
 
+# symbol = "A5H24"
 
+# api_info, meta_data = fd.get_company_overview(symbol)
 
+# print (api_info)

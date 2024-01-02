@@ -10,3 +10,4 @@ def get_stock_data(ticker: str, period: str="1y", reverse: bool=False) -> DataFr
         data = reversed(data_list)
     return data
 
+

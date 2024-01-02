@@ -67,20 +67,20 @@ class IndexView(generic.TemplateView):
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         ticker_list = Ticker.objects.all().order_by('-capitalization')[:20]
-        ticker_dict_one = {ticker.ticker_name : ticker.company_name for ticker in ticker_list[:10]}
-        ticker_dict_two = {ticker.ticker_name : ticker.company_name for ticker in ticker_list[10:]}
-        ticker_dict_full = {**ticker_dict_one, **ticker_dict_two}
+
+        ticker_list_one = ticker_list[:10]
+        ticker_list_two = ticker_list[10:]
         clicked_ticker = self.request.GET.get('ticker_click')
         if not clicked_ticker:
-            clicked_ticker = random.choice(list(ticker_dict_full.keys()))
-        data = get_stock_data(clicked_ticker, reverse=True)
+            clicked_ticker = random.choice(ticker_list)
+        data = get_stock_data(clicked_ticker.ticker_name, reverse=True)
         markets = Market.objects.all()
         context["markets"] = markets
         context['data'] = data
-        context['tickers_one'] = ticker_dict_one
-        context['tickers_two'] = ticker_dict_two
-        context['ticker'] = clicked_ticker
-        context['company_name'] = ticker_dict_full[clicked_ticker]
+        context['tickers_one'] = ticker_list_one
+        context['tickers_two'] = ticker_list_two
+        context['clicked_ticker'] = clicked_ticker
+
         return context
 
 
@@ -91,18 +91,9 @@ class MarketReview(generic.DetailView):
         
     def get_context_data(self, **kwargs):
 
-        def find_prefix(word: str, current_sorter: str) -> str:
-            '''Function takes word, and checks if it's the same as current_sorter.
-            If it is, it returns "-".'''
-            if word == current_sorter:
-                return "-"
-            else:
-                return ""
-            
         context = super().get_context_data(**kwargs)
         market = self.get_object()
-        tickers = Ticker.objects.filter(origin_market=market)
-        tickers = Ticker.objects.filter(data_fetched=True)
+        tickers = Ticker.objects.filter(origin_market=market, for_display=True)
         sorter = self.request.GET.get('sort_by')
         
         if not sorter:
@@ -118,7 +109,6 @@ class MarketReview(generic.DetailView):
             ]
         context['related_tickers'] = tickers
         context['current_sorter'] = sorter
-        context['find_prefix'] = find_prefix
         return context
     
 
@@ -133,34 +123,37 @@ class TickerReview(generic.DetailView):
         if not period:
             period = "1y"
         data = get_stock_data(ticker=ticker.ticker_name, period=period)
-        signals_smas = analyze_by_single_moving_average_strategy(data)
-        signals_dmas = analyze_by_double_moving_averages_strategy(data)
-        signals_rsis = analyze_by_rsi_strategy(data)
-        signals_mrs = analyze_by_mean_reversion_strategy(data)
-        context['chart_periods'] = [
-            (0, "All times", "max"),
-            (10, "10 Years", "10y"), 
-            (20, "5 Years", "5y"),
-            (30, "2 Years", "2y"),
-            (40, "1 Year", "1y"),
-            (50, "6 Months", "6mo"),
-            (60, "3 Months", "3mo"),
-            (70, "1 Month", "1mo"),
-            (80, "5 Days", "5d"),
-            (90, "1 Day", "1d")
-            ]
+        context["data_availble"] = not data.empty
+        if not data.empty:
+            signals_smas = analyze_by_single_moving_average_strategy(data)
+            signals_dmas = analyze_by_double_moving_averages_strategy(data)
+            signals_rsis = analyze_by_rsi_strategy(data)
+            signals_mrs = analyze_by_mean_reversion_strategy(data)
+            context['chart_periods'] = [
+                (0, "All times", "max"),
+                (10, "10 Years", "10y"), 
+                (20, "5 Years", "5y"),
+                (30, "2 Years", "2y"),
+                (40, "1 Year", "1y"),
+                (50, "6 Months", "6mo"),
+                (60, "3 Months", "3mo"),
+                (70, "1 Month", "1mo"),
+                (80, "5 Days", "5d"),
+                (90, "1 Day", "1d")
+                ]
 
-        context['current_price'] = data.iloc[-1]['Close']
-        context['chart'] = create_chart(data, ticker, period)
-        context['advice_single_moving_average'] = advice_move(signals_smas)
-        context['advice_double_moving_average'] = advice_move(signals_dmas)
-        context['advice_rsi'] = advice_move(signals_rsis)
-        context['advice_mean_reversion'] = advice_move(signals_mrs)
-        context['info_single_moving_average'] = strategies_info["single_moving_average"]
-        context['info_double_moving_average'] = strategies_info["double_moving_average"]
-        context['info_rsi'] = strategies_info["rsi"]
-        context['info_mean_reversion'] = strategies_info["mean_reversion"]
-        return context
+            context['current_price'] = data.iloc[-1]['Close']
+            context['chart'] = create_chart(data, ticker, period)
+            context['advice_single_moving_average'] = advice_move(signals_smas)
+            context['advice_double_moving_average'] = advice_move(signals_dmas)
+            context['advice_rsi'] = advice_move(signals_rsis)
+            context['advice_mean_reversion'] = advice_move(signals_mrs)
+            context['info_single_moving_average'] = strategies_info["single_moving_average"]
+            context['info_double_moving_average'] = strategies_info["double_moving_average"]
+            context['info_rsi'] = strategies_info["rsi"]
+            context['info_mean_reversion'] = strategies_info["mean_reversion"]
+            return context
+            
 
 
 class CSVUploadView(FormView):
