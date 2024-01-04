@@ -9,6 +9,7 @@ import matplotlib.pyplot as plt
 import yfinance as yf
 from pandas import DataFrame
 
+from django.shortcuts import get_object_or_404
 from django.views import generic
 from django.views.generic.edit import FormView
 from django.contrib import messages
@@ -70,9 +71,11 @@ class IndexView(generic.TemplateView):
 
         ticker_list_one = ticker_list[:10]
         ticker_list_two = ticker_list[10:]
-        clicked_ticker = self.request.GET.get('ticker_click')
-        if not clicked_ticker:
+        clicked_ticker_id = self.request.GET.get('ticker_click')
+        if not clicked_ticker_id:
             clicked_ticker = random.choice(ticker_list)
+        else:
+            clicked_ticker = get_object_or_404(Ticker, id=clicked_ticker_id)
         data = get_stock_data(clicked_ticker.ticker_name, reverse=True)
         markets = Market.objects.all()
         context["markets"] = markets

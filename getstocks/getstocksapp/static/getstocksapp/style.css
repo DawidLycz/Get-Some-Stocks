@@ -4,6 +4,15 @@ header {
     padding: 20px; 
 }
 
+.logo {
+    position: absolute;
+    font-size: 200%;
+    color:gold;
+    top: 3%;
+    left: 1%;
+
+}
+
 nav ul {
     list-style: none;
 }

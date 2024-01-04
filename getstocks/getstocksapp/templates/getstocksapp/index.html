@@ -24,14 +24,14 @@
     <ul style="list-style: none; display: flex; justify-content: center;">
         {% for ticker in tickers_one %}
         <li style="margin-right: 10px;">
-            <a href="{% url 'getstocksapp:home' %}?ticker_click={{ ticker }}" style="color: #ff7c11;; font-size: 20px;">{{ ticker.ticker_name }}</a>
+            <a href="{% url 'getstocksapp:home' %}?ticker_click={{ ticker.id }}" style="color: #ff7c11;; font-size: 20px;">{{ ticker.ticker_name }}</a>
         </li>
         {% endfor %}
     </ul>
     <ul style="list-style: none; display: flex; justify-content: center;">
         {% for ticker in tickers_two %}
         <li style="margin-right: 10px;">
-            <a href="{% url 'getstocksapp:home' %}?ticker_click={{ ticker }}" style="color: #ff7c11;; font-size: 20px;">{{ ticker.ticker_name }}</a>
+            <a href="{% url 'getstocksapp:home' %}?ticker_click={{ ticker.id }}" style="color: #ff7c11;; font-size: 20px;">{{ ticker.ticker_name }}</a>
         </li>
         {% endfor %}
     </ul>
