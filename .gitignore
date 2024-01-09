@@ -1,5 +1,6 @@
 playground.py
 debug.log
+getstocks/tests/__pycache__
 getstocks/getstocks/__pycache__
 getstocks/getstocksapp/__pycache__
 getstocks/getstocksapp/migrations/__pycache__

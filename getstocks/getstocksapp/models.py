@@ -70,10 +70,3 @@ class Ticker(models.Model):
         self.for_display = True
         self.save()
     
-    def do_desc(self):
-        self.temp_description = self.company_description
-        self.save()
-    
-    def do_desc2(self):
-        self.company_description = self.temp_description
-        self.save()
