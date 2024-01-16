@@ -22,7 +22,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = 'django-insecure-6_h+ydj6nzal@^s@1!(roy0+)^20df1^aqv96zxg$!hu7^q_50'
 
-# ALPHAVANTAGE_API_KEY = '4KL6FXFAI196YG5S'
+ALPHAVANTAGE_API_KEY = '4KL6FXFAI196YG5S'
 DATABASE_PASSWORD = 'Y7y7y7y7!!'
 
 
@@ -36,6 +36,7 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'getstocksapp.apps.GetstocksappConfig',
+    # 'getstocksapp',
     'admin_extra_buttons',
     'django.contrib.admin',
     'django.contrib.auth',

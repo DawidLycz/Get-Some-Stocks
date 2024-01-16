@@ -158,7 +158,6 @@ class TickerReview(generic.DetailView):
             return context
             
 
-
 class CSVUploadView(FormView):
     template_name = 'getstocksapp/upload_csv.html'
     form_class = CSVUploadForm 

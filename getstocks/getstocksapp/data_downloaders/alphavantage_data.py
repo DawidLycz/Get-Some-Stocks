@@ -3,10 +3,10 @@ import logging
 from django.conf import settings
 from dataclasses import dataclass
 
-# ALPHAVANTAGE_API_KEY = '4KL6FXFAI196YG5S'
-# fd = FundamentalData(key=ALPHAVANTAGE_API_KEY)
+ALPHAVANTAGE_API_KEY = '4KL6FXFAI196YG5S'
+fd = FundamentalData(key=ALPHAVANTAGE_API_KEY)
 
-fd = FundamentalData(key=settings.ALPHAVANTAGE_API_KEY)
+# fd = FundamentalData(key=settings.ALPHAVANTAGE_API_KEY)
 logger = logging.getLogger(__name__)
 
 @dataclass
