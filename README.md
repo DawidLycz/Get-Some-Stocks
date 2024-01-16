@@ -6,18 +6,39 @@ Project is currently in phase of development
 ![review.gif](https://github.com/DawidLycz/Get-Some-Stocks/blob/main/review.gif?raw=true)
 
 ## About the App
-Get-Some-Stocks is a sophisticated web application designed to provide users with a comprehensive platform for exploring global stock markets and analyzing stock prices. With its user-friendly interface, the app empowers users to stay informed about market trends and make informed investment decisions.
+Get-Some-Stocks is a web application built on the Django framework, allowing users to browse various stock markets around the world and analyze stock prices. Additionally, the application is equipped with built-in algorithms that, based on the chosen strategy, assess whether it is currently a good time to buy, sell, or wait.
 
 ### Key Features:
-Market Exploration: Get-Some-Stocks allows users to effortlessly browse various stock markets worldwide. Whether you're interested in the bustling New York Stock Exchange or the dynamic Asian markets, the app provides real-time data to keep you in the know.
+* Market Exploration: Get-Some-Stocks enables users to easily explore different stock exchanges worldwide. Whether you're interested in events on the bustling Wall Street in New York or dynamic markets in Asia, the application provides real-time data to keep you informed.
 
-Price Inspection: Dive into the details with our intuitive price inspection feature. Users can explore detailed stock prices, historical data, and interactive charts to gain a deeper understanding of market movements.
+* Price Inspection: Dive into the details with the intuitive price inspection feature. Users can delve into detailed stock prices, historical data, and interactive charts to gain a deeper understanding of market movements.
 
-Algorithmic Insights: The application is equipped with advanced algorithms that cater to different investment strategies. Based on your chosen approach, whether it's day trading, long-term investment, or something in between, the algorithms provide valuable insights into the current market conditions.
+* Built-in Algorithms: The application comes with advanced algorithms tailored to various investment strategies. Based on your chosen approach, whether it's short-term trading, long-term strategies, or something in between, the algorithms provide valuable insights into the current market conditions.
 
-Decision Support: Get-Some-Stocks goes beyond mere information display by offering decision support. Depending on your chosen strategy, the app provides recommendations on whether it's a favorable time to buy, sell, or adopt a patient approach. These insights are derived from a careful analysis of market trends and the application's powerful algorithms.
+* Decision Support: Get-Some-Stocks goes beyond merely displaying information by offering decision support. Depending on your chosen strategy, the app provides recommendations on whether it's a favorable time to buy, sell, or adopt a wait-and-see approach. These insights result from a thorough analysis of market trends and the powerful algorithms of the application.
 
-User-Friendly Interface: The app boasts a user-friendly interface, making it accessible for both novice and experienced investors. The intuitive design ensures that users can navigate seamlessly through the wealth of information available.
+* User-Friendly Interface: The app features a user-friendly interface, making it accessible to both novice and experienced investors. The intuitive design ensures seamless navigation through the wealth of available information.
 
-In a world where the stock market is ever-changing, Get-Some-Stocks aims to be your reliable companion, assisting you in making well-informed decisions and optimizing your investment portfolio. Download the app now to embark on a journey of financial exploration and empowerment.
+* In a world where the financial market is constantly evolving, Get-Some-Stocks aims to be your reliable companion, assisting you in making informed decisions and optimizing your investment portfolio. Download the app now and embark on a journey of financial exploration and empowerment.
+
+## Dependencies
+
+The project relies on the following Python libraries and packages:
+
+- [Alpha Vantage](https://www.alphavantage.co/): A powerful API for financial market data.
+- [Matplotlib](https://matplotlib.org/): A comprehensive library for creating static, animated, and interactive visualizations.
+- [yfinance](https://pypi.org/project/yfinance/): A library for fetching financial data from Yahoo Finance.
+- [Pandas](https://pandas.pydata.org/): A versatile data manipulation and analysis library.
+- [mysqlclient](https://pypi.org/project/mysqlclient/): A MySQL database connector for Django.
+
+Make sure to install these dependencies by running the following command:
+
+```bash
+pip install -r requirements.txt
+
+
+
+
+
+
 

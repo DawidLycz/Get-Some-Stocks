@@ -1,0 +1,7 @@
+django==5.0.1
+admin-extra-buttons==1.5.7
+alpha-vantage==1.2.1
+mysqlclient==2.2.1
+pandas==2.1.4
+matplotlib==3.8.2
+yfinance==0.2.35
