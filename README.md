@@ -35,10 +35,3 @@ Make sure to install these dependencies by running the following command:
 
 ```bash
 pip install -r requirements.txt
-
-
-
-
-
-
-

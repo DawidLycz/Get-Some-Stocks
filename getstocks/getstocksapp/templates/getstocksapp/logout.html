@@ -1,0 +1,22 @@
+{% extends 'getstocksapp/base.html' %}
+
+{% block title %}
+    Logout
+{% endblock %}
+
+{% block content %}
+    <h1 style="font-size: 450%; color: gold; text-align: center;">Logout</h1>
+    {% if user.is_authenticated %}
+    <h1 style="font-size: 250%; color: gold; text-align: center;">You are currently logged as:</h1>
+    <h1 style="font-size: 400%; color: #fa7000; text-align: center;">{{user}}</h1>>
+    <h1 style="font-size: 250%; color: gold; text-align: center;">Would you like to log out?</h1>
+      <form action="{% url 'getstocksapp:logout' %}" method="post" style="display: inline;">
+        {% csrf_token %}
+        <button type="submit">Log out</button>
+      </form>
+    {% else %}
+        <h3 style="font-size: 300%; color: gold; text-align: center;">You're not logged in right now. Would you like to log in?</h3>
+        <a style="font-size: 400%; color: #fa7000; display: block; text-align: center; margin: 0 auto;" href="{% url 'getstocksapp:login' %}">Log in</a>
+    {% endif %}
+{% endblock %}
+

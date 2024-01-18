@@ -12,8 +12,12 @@
             <ul style="margin-left:15%;">
                 <li><a href="{% url 'getstocksapp:home' %}">Homepage</a></li>
                 <li><a href="{% url 'getstocksapp:about_us' %}">About us</a></li>
-                <li><a href="{% url 'getstocksapp:services' %}">Services</a></li>
-                <li><a href="{% url 'getstocksapp:contact' %}">Contact</a></li>
+                {% if user.is_authenticated %}
+                    <li><a href="{% url 'getstocksapp:logoutconfirm' %}">Log out</a></li>
+                {% else %}
+                    <li><a href="{% url 'getstocksapp:registration' %}">Registration</a></li>
+                    <li><a href="{% url 'getstocksapp:login' %}">Log in</a></li>
+                {% endif %}
             </ul>
         </nav>
     </header>
@@ -23,4 +27,3 @@
 </body>
 
 </html>
-

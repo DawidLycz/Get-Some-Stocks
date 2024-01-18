@@ -13,10 +13,16 @@ from django.shortcuts import get_object_or_404
 from django.views import generic
 from django.views.generic.edit import FormView
 from django.contrib import messages
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
+
+from django.contrib.auth.forms import AuthenticationForm
+from django.contrib.auth.views import LoginView, LogoutView
+from django.contrib.auth import login, logout
+from django.shortcuts import render, redirect
+from django.views import View
 
 from .models import Market, Ticker
-from .forms import CSVUploadForm
+from .forms import CSVUploadForm, CustomUserCreationForm, CustomAuthenticationForm
 from .trade_logic import *
 from .data_downloaders.yfinance_data import get_stock_data
 
@@ -83,6 +89,7 @@ class IndexView(generic.TemplateView):
         context['tickers_one'] = ticker_list_one
         context['tickers_two'] = ticker_list_two
         context['clicked_ticker'] = clicked_ticker
+        context['current_user'] = self.request.user
 
         return context
 
@@ -241,3 +248,48 @@ class AdvisorInfo(generic.TemplateView):
         context["advisor_image_url"] = advisor_image_url
         return context
 
+
+class RegistrationView(generic.TemplateView):
+    template_name = 'getstocksapp/registration.html'
+
+    def get(self, request, *args, **kwargs):
+        form = CustomUserCreationForm()
+        return render(request, self.template_name, {'form': form})
+
+    def post(self, request, *args, **kwargs):
+        form = CustomUserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('getstocksapp:home') 
+        return render(request, self.template_name, {'form': form})
+    
+
+class CustomLoginView(LoginView):
+    template_name = 'getstocksapp/login.html'
+    form_class = CustomAuthenticationForm
+    success_url = reverse_lazy('getstocksapp:home')
+
+    def form_valid(self, form):
+        login(self.request, form.get_user())
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        return self.success_url
+
+class LogoutConfirm(generic.TemplateView):
+    template_name = 'getstocksapp/logout.html'
+
+
+class CustomLogoutView(LogoutView):
+    next_page = reverse_lazy('getstocksapp:home')
+
+    def get(self, request, *args, **kwargs):
+        if self.request.user.is_authenticated:
+            # Użytkownik jest teraz wylogowany, przekieruj na stronę główną
+            return redirect(self.next_page)
+        return super().get(request, *args, **kwargs)
+
+    def post(self, request, *args, **kwargs):
+        return super().post(request, *args, **kwargs)
+    
