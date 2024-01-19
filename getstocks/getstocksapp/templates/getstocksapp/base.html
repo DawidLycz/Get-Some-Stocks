@@ -14,12 +14,19 @@
                 <li><a href="{% url 'getstocksapp:about_us' %}">About us</a></li>
                 {% if user.is_authenticated %}
                     <li><a href="{% url 'getstocksapp:logoutconfirm' %}">Log out</a></li>
+                    <li style="float:right; color:#fa7000;">Logged as: {{user}}</li>
+                    <li style="float:right; color:#fa7000;"><a href="{% url 'getstocksapp:profile' user.id %}">Profile</a></li>
                 {% else %}
                     <li><a href="{% url 'getstocksapp:registration' %}">Registration</a></li>
                     <li><a href="{% url 'getstocksapp:login' %}">Log in</a></li>
+                    <li style="float:right; color:#fa7000;">Logged as: Guest</li>
+                    {% endif %}
+                {% if user.is_superuser %}
+                    <li><a href="{% url 'admin:index' %}">Admin Panel</a></li>
                 {% endif %}
             </ul>
         </nav>
+        
     </header>
 <div class="logo">GetSomeStocks</div>
 <body>

@@ -219,3 +219,13 @@ button:hover{
     font-size: 150%;
     margin-left: 10%
 }
+
+.user-data-cell{
+    font-size: 270%; 
+    color: gold; 
+    margin-top: 1%;
+    margin-left: 20%; 
+    margin-right: 20%;
+    background-color: rgb(16, 0, 46);
+    border: 5px inset gold;
+}

@@ -14,6 +14,7 @@ from django.views import generic
 from django.views.generic.edit import FormView
 from django.contrib import messages
 from django.urls import reverse_lazy, reverse
+from django.contrib.auth.models import User
 
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView, LogoutView
@@ -21,7 +22,7 @@ from django.contrib.auth import login, logout
 from django.shortcuts import render, redirect
 from django.views import View
 
-from .models import Market, Ticker
+from .models import Market, Ticker, Wallet
 from .forms import CSVUploadForm, CustomUserCreationForm, CustomAuthenticationForm
 from .trade_logic import *
 from .data_downloaders.yfinance_data import get_stock_data
@@ -225,6 +226,7 @@ class AdvisorInfo(generic.TemplateView):
         
         context = super().get_context_data(**kwargs)
         advisor = self.request.GET.get('advisor')
+
         match advisor:
             case "Single_moving_average":
                 advisor_info = strategies_info["single_moving_average"]
@@ -277,6 +279,7 @@ class CustomLoginView(LoginView):
     def get_success_url(self):
         return self.success_url
 
+
 class LogoutConfirm(generic.TemplateView):
     template_name = 'getstocksapp/logout.html'
 
@@ -286,10 +289,23 @@ class CustomLogoutView(LogoutView):
 
     def get(self, request, *args, **kwargs):
         if self.request.user.is_authenticated:
-            # Użytkownik jest teraz wylogowany, przekieruj na stronę główną
             return redirect(self.next_page)
         return super().get(request, *args, **kwargs)
 
     def post(self, request, *args, **kwargs):
         return super().post(request, *args, **kwargs)
     
+
+class UserProfileView(generic.DetailView):
+    model = User
+    template_name = 'getstocksapp/user_profile.html'
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        user_instance = context['user']
+        user = self.get_object()
+        field_names = ['Id', 'Username', 'E-mail', 'First name', 'Last name', 'Joined']
+        field_values = [user.id, user.username, user.email, user.first_name, user.last_name, user.date_joined,]
+
+        context['user_data'] = list(zip(field_names, field_values))
+        return context

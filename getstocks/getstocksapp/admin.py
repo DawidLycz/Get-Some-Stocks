@@ -13,7 +13,7 @@ from admin_extra_buttons.utils import HttpResponseRedirectToReferrer
 
 from .data_downloaders.alphavantage_data import get_ticker_info_obj
 
-from .models import Market, Ticker
+from .models import Market, Ticker, Wallet
 
 class MarketAdmin(ExtraButtonsMixin, admin.ModelAdmin):
     list_display = ('name', 'logo_thumbnail') 
@@ -83,3 +83,4 @@ class TickerAdmin(admin.ModelAdmin):
 
 admin.site.register(Market, MarketAdmin)
 admin.site.register(Ticker, TickerAdmin)
+admin.site.register(Wallet)
