@@ -6,20 +6,36 @@
 
 {% block content %}
     <h2 style="font-size: 500%; color: gold; text-align: center; ">{{ user }}</h2>
-    <p style="font-size: 350%; color: gold; margin-left: 20%;">User data:</p>
-    <div>
-    {% for name, value in user_data %}
-        <div class="user-data-cell">
-            <span style="color:#fa7000;">{{ name }}:</span>
-            {% if value %}
-            <span>{{ value }}</span>
-            {% else %}
-            <span>Unknown</span>
-            {% endif %}
-        </div>
-    {% endfor %}
+
+    <div class="profile_data_container">
+        <p style="font-size: 350%; color: gold; margin-left: 20%;">Wallets:</p>
+        {% for wallet in wallets %}
+            <a href="{% url 'getstocksapp:wallet' wallet.id %}">
+                <div class="user-wallet-cell">
+                    <span>{{ wallet.name }}</span>
+                    <span style="float:right; color:#fa7000;">{{ wallet.owner }}</span>
+                </div>
+            </a>
+        {% endfor %}
+    <form method="post" action="{% url 'getstocksapp:profile' user.id %}">
+        {% csrf_token %}
+        <button class="custom-button" type="submit">Create New Wallet</button>
+    </form>
     </div>
-    <p style="font-size: 350%; color: gold; margin-left: 20%;">Wallets:</p>
-
-
+    <div class="profile_data_container">
+        <p style="font-size: 350%; color: gold; margin-left: 20%;">User data:</p>
+        {% for name, value in user_data %}
+            <div class="user-data-cell">
+                <span style="color:#fa7000;">{{ name }}:</span>
+                {% if value %}
+                    <span>{{ value }}</span>
+                {% else %}
+                    <span>Unknown</span>
+                {% endif %}
+            </div>
+        {% endfor %}
+        {% if 1 == 1 %}
+        <a href="{% url 'getstocksapp:profile_edit' user.id %}"><button class="custom-button" type="button">  Edit data  </button></a>
+        {% endif %}
+    </div>
 {% endblock %}

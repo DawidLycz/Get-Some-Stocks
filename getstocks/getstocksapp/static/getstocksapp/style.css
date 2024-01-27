@@ -71,7 +71,7 @@ td {
 }
 
 .advice-container {
-    position:absolute;
+    position: absolute;
     display: inline-block;
 }
 
@@ -199,19 +199,20 @@ label {
 
 }
 
-button{
+.custom-button{
     color: gold;
     font-size: 300%;
     background-color: rgb(16, 0, 46);
     border: 5px inset gold;
-    margin-top: 10%;
+    margin-top: 1%;
     margin-left: 50%;
-    transform: translateX(-50%);
-
+    transform: translateX(-50%); 
 }
 
-button:hover{
-    border: 5px inset #fa7000;
+
+button:hover {
+    background-color: rgb(255, 145, 0);
+    cursor: pointer;
 }
 
 .errorlist{
@@ -228,4 +229,110 @@ button:hover{
     margin-right: 20%;
     background-color: rgb(16, 0, 46);
     border: 5px inset gold;
+}
+
+.user-wallet-cell{
+    font-size: 270%; 
+    color: gold; 
+    margin-top: 1%;
+
+    background-color: rgb(16, 0, 46);
+    border: 5px inset gold;
+}
+
+.user-wallet-cell:hover{
+    background-color: rgb(255, 145, 0);
+}
+
+.profile_data_container{
+    margin-left: 20%; 
+    margin-right: 20%;
+}
+
+.wallet-record-cell{
+    font-size: 270%; 
+    color: gold; 
+    margin-top: 1%;
+    background-color: rgb(16, 0, 46);
+    border: 5px inset gold;
+}
+
+.wallet-record-cell-label{
+    position: relative;
+    width : 100%;
+    background-color : rgb(29, 7, 109);
+    border: 5px inset gold;
+    box-sizing: border-box;
+    text-align: center;
+}
+
+.wallet-record-cell-cross {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+    height: 100%;
+    width: 4%;
+    border: 1px inset gold;
+    box-sizing: border-box;
+    text-align: center;
+    background: url("images/cross1.png") center center no-repeat;
+    background-size: cover;
+}
+
+.wallet-record-cell-cross:hover {
+    background: url("images/cross2.png") center center no-repeat;
+    background-size: cover;
+}
+
+
+.wallet-record-cell-edit {
+    position: absolute;
+    top: 0px;
+    right: 4%;
+    height: 100%;
+    width: 4%;
+    border: 1px inset gold;
+    box-sizing: border-box;
+    text-align: center;
+    background: url("images/edit1.png") center center no-repeat;
+    background-size: cover;
+}
+
+.wallet-record-cell-edit:hover {
+    background: url("images/edit2.png") center center no-repeat;
+    background-size: cover;
+}
+
+
+.wallet-record-cell-transfer {
+    position: absolute;
+    top: 0px;
+    right: 8%;
+    height: 100%;
+    width: 4%;
+    border: 1px inset gold;
+    box-sizing: border-box;
+    text-align: center;
+    background: url("images/arrows1.png") center center no-repeat;
+    background-size: cover;
+}
+
+.wallet-record-cell-transfer:hover {
+    background: url("images/arrows2.png") center center no-repeat;
+    background-size: cover;
+}
+
+
+.wallet-record-cell-text {
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    height: 100%;
+    width: 88%;
+    border: 1px inset gold;
+    box-sizing: border-box;
+}
+
+.wallet-record-cell-text:hover{
+    background-color: rgb(255, 145, 0);
 }

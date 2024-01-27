@@ -1,0 +1,76 @@
+{% extends 'getstocksapp/base.html' %}
+
+{% block title %}
+    Profile
+{% endblock %}
+
+{% block content %}
+<h2 style="font-size: 500%; color: gold; text-align: center; ">{{ object.name }}</h2>
+{% if records_data %}
+    <div>
+        {% for record, price, growth_unit, total_value, total_growth in records_data %}
+        <div class="wallet-record-cell">
+                <div class="wallet-record-cell-label">
+                    <a style="color:gold" href="{% url 'getstocksapp:wallet_delete_record' record.id %}">
+                        <div class="wallet-record-cell-cross"></div>
+                    </a>
+                    <a style="color:gold" href="{% url 'getstocksapp:wallet_edit_record' record.id %}">
+                        <div class="wallet-record-cell-edit"></div>
+                    </a>
+                    <a style="color:gold" href="{% url 'getstocksapp:wallet_transfer_record' record.id %}">
+                        <div class="wallet-record-cell-transfer"></div>
+                    </a>
+                    <a style="color:gold" href="{% url 'getstocksapp:tickerreview' record.ticker.id %}">
+                        <div class="wallet-record-cell-text">{{record.name}}</div>  
+                    </a>    
+                    <span style="color: rgb(29, 7, 109)">ghost</span>                 
+                </div>
+                <span style="color: #ff7c11; float:right">{{total_value|floatformat:2}} {{record.ticker.currency}}</span>                 
+                <table  style="font-size: 20px; width:80%; border-color: #ff7c11;">
+                    <thead>
+                        <tr>
+                            <th>Ticker</th>
+                            <th>Date of purchase</th>
+                            <th>Quantity</th>
+                            <th>Initial price</th>
+                            <th>Current_price</th>
+                            <th>Growth per unit</th>
+                            <th>Total growth</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td style = "text-align:center;">{{record.ticker.ticker_name}}</td>
+                            <td style = "text-align:center;">{{record.creation_time|date:"m-d-Y"}}</td>
+                            <td style = "text-align:center;">{{record.quantity}}</td>
+                            <td style = "text-align:center;">{{record.init_price}} {{record.ticker.currency}}</td>
+                            <td style = "text-align:center;">{{price}} {{record.ticker.currency}}</td>
+                            <td style = "text-align:center;">{{growth_unit|floatformat:2}} {{record.ticker.currency}}</td>
+                            <td style = "text-align:center;">{{total_growth|floatformat:2}} {{record.ticker.currency}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+        </div>
+        {% endfor %}
+    </div>
+{% else %}
+    <h2 style="font-size: 500%; color: gold; text-align: center; ">This wallet is empty. Add some stocks from ticker browser</h2>
+    <a href="{% url 'getstocksapp:profile' user.id %}">
+        <button class="custom-button" style ="margin-top: 2%;"type="button">Check other wallets</button>
+    </a>
+{% endif %}
+    <div>
+        <a href="{% url 'getstocksapp:wallet_invite' object.id %}">
+            <button class="custom-button" type="button">Invite to Wallet</button>
+        </a>
+        <a href="{% url 'getstocksapp:wallet_edit' object.id %}">
+            <button class="custom-button" type="button">Edit Wallet</button>
+        </a>
+        <form method="post" action="{% url 'getstocksapp:wallet' object.id %}?action=delete_wallet">
+            {% csrf_token %}
+            <input type="hidden" name="delete_wallet_button" value="clicked">
+            <button class="custom-button" type="submit">Delete Wallet</button>
+        </form>
+    </div>
+{% endblock %}
+

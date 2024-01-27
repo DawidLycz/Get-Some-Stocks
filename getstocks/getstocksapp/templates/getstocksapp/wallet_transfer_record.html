@@ -1,0 +1,19 @@
+{% extends 'getstocksapp/base.html' %}
+
+{% block title %}
+    Transfer Record
+{% endblock %}
+
+{% block content %}
+<h2 style="font-size: 500%; color: gold; text-align: center; ">Transfer {{ record.name }} to another wallet</h2>
+<h2 style="font-size: 400%; color: gold; text-align: center; ">Please choose wallet</h2>
+
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="custom-button" style="margin-top: 1%;" type="submit">Transfer</button>
+    <a href="{% url 'getstocksapp:wallet' record.wallet.id %}">
+      <button class="custom-button" style="margin-top: 1%;" type="button">Cancel</button>
+    </a>
+</form>
+{% endblock %}

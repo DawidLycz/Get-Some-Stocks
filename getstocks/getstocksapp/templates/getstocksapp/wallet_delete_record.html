@@ -1,0 +1,22 @@
+{% extends 'getstocksapp/base.html' %}
+
+{% block title %}
+    Delete Record
+{% endblock %}
+
+{% block content %}
+<h2 style="font-size: 500%; color: gold; text-align: center; ">Delete Record {{ record.name }}</h2>
+<h2 style="font-size: 400%; color: gold; text-align: center; ">Are you sure you want to remove this record from your wallet</h2>
+
+<div>
+    <form method="post" action="{% url 'getstocksapp:wallet_delete_record' record.id %}">
+        {% csrf_token %}
+        <input type="hidden" name="delete_record_button" value="clicked">
+        <button class="custom-button" type="submit">Delete Record</button>
+    </form>
+    <a href="{% url 'getstocksapp:wallet' record.wallet.id %}">
+        <button class="custom-button" style="margin-top: 1%;" type="button">Cancel</button>
+    </a>
+</div>
+
+{% endblock %}

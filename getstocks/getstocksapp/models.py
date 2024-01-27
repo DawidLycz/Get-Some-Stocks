@@ -3,26 +3,11 @@ from django.contrib.auth.models import User
 from django.dispatch import receiver
 from django.db.models.signals import pre_save
 from .data_downloaders.alphavantage_data import get_ticker_info_obj
+from django.utils import timezone
+
 
 NO_DATA = "No data"
 
-class Wallet(models.Model):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
-    guests = models.ManyToManyField(User, related_name='guest_wallets', blank=True)
-    name = models.CharField(max_length=200, blank=True)
-
-    def __str__(self) -> str:
-        return self.name
-    
-    
-            
-@receiver(pre_save, sender=Wallet)
-def wallet_pre_save(sender, instance, **kwargs):
-    if not instance.name:
-        instance.name = f"{instance.owner.username}_wallet"
-
-    if instance.owner in instance.guests.all():
-        instance.guests.remove(instance.owner)
 
 class Market(models.Model):
     name = models.CharField(max_length=200)
@@ -90,4 +75,34 @@ class Ticker(models.Model):
     def set_for_display(self):
         self.for_display = True
         self.save()
+
+
+class Wallet(models.Model):
+    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    name = models.CharField(max_length=200, blank=True)
+
+    def __str__(self) -> str:
+        return self.name
     
+                
+@receiver(pre_save, sender=Wallet)
+def wallet_pre_save(sender, instance, **kwargs):
+    if not instance.name:
+        instance.name = f"{instance.owner.username}_wallet"
+
+
+class WalletRecord(models.Model):
+    name = models.CharField(max_length=200, blank=True)
+    wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE)
+    ticker = models.ForeignKey(Ticker, on_delete=models.CASCADE)
+    quantity = models.IntegerField(default=1)
+    creation_time = models.DateTimeField(default=timezone.now)
+    init_price = models.FloatField(default=0.0)
+
+    def __str__(self) -> str:
+        return 'wallet record'
+
+@receiver(pre_save, sender=WalletRecord)
+def wallet_pre_save(sender, instance, **kwargs):
+    if not instance.name:
+        instance.name = f"{instance.ticker.company_name}"

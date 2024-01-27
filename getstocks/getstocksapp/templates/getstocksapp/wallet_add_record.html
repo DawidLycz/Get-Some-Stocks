@@ -1,0 +1,18 @@
+{% extends 'getstocksapp/base.html' %}
+
+{% block title %}
+    Edit profile
+{% endblock %}
+
+{% block content %}
+  <h1>Add to wallet</h1>
+  <form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="custom-button" style="margin-top: 1%;" type="submit">Add to wallet</button>
+    <button class="custom-button" style="margin-top: 1%;" type="reset">Reset</button>
+    <a href="{% url 'getstocksapp:tickerreview' ticker.id %}">
+      <button class="custom-button" style="margin-top: 1%;" type="button">Cancel</button>
+    </a>
+  </form>
+{% endblock %}

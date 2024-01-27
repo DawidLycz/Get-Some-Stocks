@@ -11,22 +11,23 @@ from pandas import DataFrame
 
 from django.shortcuts import get_object_or_404
 from django.views import generic
-from django.views.generic.edit import FormView
+from django.views.generic.edit import FormView, UpdateView
 from django.contrib import messages
 from django.urls import reverse_lazy, reverse
 from django.contrib.auth.models import User
 
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth import login, logout
 from django.shortcuts import render, redirect
 from django.views import View
 
-from .models import Market, Ticker, Wallet
-from .forms import CSVUploadForm, CustomUserCreationForm, CustomAuthenticationForm
-from .trade_logic import *
-from .data_downloaders.yfinance_data import get_stock_data
+from .models import Market, Ticker, Wallet, WalletRecord
+from .forms import CSVUploadForm, CustomUserCreationForm, CustomAuthenticationForm, UserProfileEditForm, WalletRecordForm, RecordChangeWalletForm, WalletEditForm, WalletInviteForm, RecordEditForm
 
+from .trade_logic import *
+from .data_downloaders.yfinance_data import get_stock_data, get_prices_of_many_tickers
 
 
 STRATEGY_DESCRIPTION_FILE = r"getstocks/getstocksapp/static/getstocksapp/strategy_descriptions.json"
@@ -302,10 +303,215 @@ class UserProfileView(generic.DetailView):
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        user_instance = context['user']
         user = self.get_object()
         field_names = ['Id', 'Username', 'E-mail', 'First name', 'Last name', 'Joined']
         field_values = [user.id, user.username, user.email, user.first_name, user.last_name, user.date_joined,]
 
         context['user_data'] = list(zip(field_names, field_values))
+        context['wallets'] = Wallet.objects.filter(owner=user)
         return context
+    
+    def post(self, request, *args, **kwargs):
+        user = self.get_object()
+        already_existing_wallets = Wallet.objects.filter(owner=user)
+        names = [wallet.name for wallet in already_existing_wallets]
+        name = f"{user.username}_wallet"
+        if name in names:
+            base_name = name
+            end_num = 0
+            while True:
+                if name in names:
+                    end_num += 1
+                    name = f'{base_name}_{end_num}'
+                else:
+                    break
+            
+        new_wallet = Wallet(owner=user, name=name)
+        new_wallet.save()
+        return redirect('getstocksapp:profile', pk=user.pk)
+
+
+class UserProfileEditView(LoginRequiredMixin, UpdateView):
+    model = User
+    form_class = UserProfileEditForm
+    template_name = 'getstocksapp/user_profile_edit.html'
+    success_url = reverse_lazy('getstocksapp:home')
+
+    def get_object(self, queryset=None):
+        return self.request.user
+
+
+class WalletView(generic.DetailView):
+    model = Wallet
+    template_name = 'getstocksapp/wallet.html'
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        wallet = self.get_object()
+        related_records = WalletRecord.objects.filter(wallet = wallet)
+        context['wallet_id'] = wallet.id
+        if related_records:
+            context['related_records'] = related_records
+            tickers_names = [record.ticker.ticker_name for record in related_records]
+            tickers_currencies = [record.ticker.currency for record in related_records]
+            init_values = [record.init_price for record in related_records]
+            prices = get_prices_of_many_tickers(tickers_names)
+            growths = [price - init_price for price, init_price in zip(prices, init_values)]
+            total_values = [price * record.quantity for price, record in zip(prices, related_records)]
+            total_init_values = [(record.quantity * record.init_price) for record in related_records]
+            total_growths = [total_value - total_init_value for total_value, total_init_value in zip(total_values, total_init_values)]
+            context['records_data'] = list(zip(related_records, prices, growths, total_values, total_growths))
+
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        
+        wallet = self.get_object()
+        user = wallet.owner
+        wallet.delete()
+        return redirect('getstocksapp:profile', pk=user.pk)
+
+
+class WalletAddView(generic.FormView):
+    template_name = 'getstocksapp/wallet_add_record.html'
+    form_class = WalletRecordForm
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        
+        context['available_wallets'] = Wallet.objects.filter(owner=self.request.user)
+        ticker_id = self.request.GET.get('ticker_id')
+        context['ticker'] = Ticker.objects.get(id=ticker_id)
+
+        return context
+
+
+    def form_valid(self, form):
+        wallet = form.cleaned_data['wallet']
+        record = form.save(commit=False)
+
+        record.quantity = form.cleaned_data.get('quantity', 1)
+        record.wallet = wallet
+
+        ticker_id = self.request.GET.get('ticker_id')
+        price =  self.request.GET.get('price')
+        record.init_price = price
+        ticker = Ticker.objects.get(id=ticker_id)
+        record.ticker = ticker
+        record.save()
+        return redirect('getstocksapp:wallet', pk=record.wallet.id)
+    
+
+class WalletEditView(generic.FormView):
+    template_name = 'getstocksapp/wallet_edit.html'
+    form_class = WalletEditForm
+
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['wallet'] = Wallet.objects.get(pk=self.kwargs['pk'])
+        return context
+    
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+    
+
+    def form_valid(self, form):
+        wallet = Wallet.objects.get(pk=self.kwargs['pk'])
+        name = form.cleaned_data['name']
+        wallet.name = name
+        wallet.save()
+        return redirect('getstocksapp:wallet', pk=wallet.id)
+
+
+class WalletInviteView(generic.FormView):
+    template_name = 'getstocksapp/wallet_invite.html'
+    form_class = WalletInviteForm
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['wallet'] = Wallet.objects.get(pk=self.kwargs['pk'])
+        return context
+    
+
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+    
+
+    def form_valid(self, form):
+        wallet = Wallet.objects.get(pk=self.kwargs['pk'])
+        user = form.cleaned_data['user']
+        print (user)
+        return redirect('getstocksapp:wallet', pk=wallet.id)
+
+class WalletDeleteRecordView(generic.FormView):
+    template_name = 'getstocksapp/wallet_delete_record.html'
+    form_class = WalletRecordForm
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        record_id = self.kwargs['pk']
+        context['record'] = WalletRecord.objects.get(pk=self.kwargs['pk'])
+        return context
+    
+
+    def post(self, request, *args, **kwargs):    
+        record = WalletRecord.objects.get(pk=self.kwargs['pk'])
+        wallet = record.wallet
+        record.delete()
+        return redirect('getstocksapp:wallet', pk=wallet.pk)
+
+
+class WalletEditRecordView(generic.FormView):
+    template_name = 'getstocksapp/wallet_edit_record.html'
+    form_class = RecordEditForm
+
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['record'] = WalletRecord.objects.get(pk=self.kwargs['pk'])
+        return context
+
+
+    def form_valid(self, form):
+        record = WalletRecord.objects.get(pk=self.kwargs['pk'])
+        name = form.cleaned_data['name']
+        quantity = form.cleaned_data['quantity']
+        if name:
+            record.name = name
+        record.quantity = quantity
+        record.save()
+        return redirect('getstocksapp:wallet', pk=record.wallet.id)
+    
+
+class WalletTransferRecordView(generic.FormView):
+    template_name = 'getstocksapp/wallet_transfer_record.html'
+    form_class = RecordChangeWalletForm
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['record'] = WalletRecord.objects.get(pk=self.kwargs['pk'])
+        return context
+    
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        kwargs['user'] = self.request.user
+        return kwargs
+    
+    def form_valid(self, form):
+        record = WalletRecord.objects.get(pk=self.kwargs['pk'])
+        wallet = form.cleaned_data['wallet']
+        record.wallet = wallet
+        record.save()
+        
+        return redirect('getstocksapp:wallet', pk=record.wallet.id)
