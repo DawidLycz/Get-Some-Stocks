@@ -1,27 +1,44 @@
 {% extends 'getstocksapp/base.html' %}
 
 {% block title %}
-    Profile
+    Wallet
 {% endblock %}
 
 {% block content %}
-<h2 style="font-size: 500%; color: gold; text-align: center; ">{{ object.name }}</h2>
+<div class="wallet-title-box">
+    <div class="wallet-title-box-label">{{ object.name }}</div>
+        <p style="margin-top: 0%; text-align: center;">
+            You are guest in this wallet. The owner is {{wallet.owner}}
+        </p>
+        <div>
+            {% if guests %}
+                <span>Currently, the wallet contains the following guests:</span>
+            {% for guest in guests %}
+                <span style="color:#ff7c11">{{ guest }} ,</span>
+            {% endfor %}
+            {% else %}
+                <span>There are no guests in this wallet</span>
+            {% endif %}
+        </div>
+        <div style="margin-top: 10%;">
+            {% if wealth_by_currencies %}
+            <span>Total wealth of this wallet, diverted into currencies:</span>
+            {% for currency, value in wealth_by_currencies.items %}
+            <p style="color:#ff7c11; text-align: center;">{{value|floatformat:2}} {{currency}}</p>
+            {% endfor %}
+            {% endif %}
+
+
+        </div>
+    
+</div>
 {% if records_data %}
     <div>
         {% for record, price, growth_unit, total_value, total_growth in records_data %}
         <div class="wallet-record-cell">
                 <div class="wallet-record-cell-label">
-                    <a style="color:gold" href="{% url 'getstocksapp:wallet_delete_record' record.id %}">
-                        <div class="wallet-record-cell-cross"></div>
-                    </a>
-                    <a style="color:gold" href="{% url 'getstocksapp:wallet_edit_record' record.id %}">
-                        <div class="wallet-record-cell-edit"></div>
-                    </a>
-                    <a style="color:gold" href="{% url 'getstocksapp:wallet_transfer_record' record.id %}">
-                        <div class="wallet-record-cell-transfer"></div>
-                    </a>
                     <a style="color:gold" href="{% url 'getstocksapp:tickerreview' record.ticker.id %}">
-                        <div class="wallet-record-cell-text">{{record.name}}</div>  
+                        <div class="wallet-record-cell-text" style="width: 100%;">{{record.name}}</div>  
                     </a>    
                     <span style="color: rgb(29, 7, 109)">ghost</span>                 
                 </div>
@@ -59,18 +76,10 @@
         <button class="custom-button" style ="margin-top: 2%;"type="button">Check other wallets</button>
     </a>
 {% endif %}
-    <div>
-        <a href="{% url 'getstocksapp:wallet_invite' object.id %}">
-            <button class="custom-button" type="button">Invite to Wallet</button>
-        </a>
-        <a href="{% url 'getstocksapp:wallet_edit' object.id %}">
-            <button class="custom-button" type="button">Edit Wallet</button>
-        </a>
-        <form method="post" action="{% url 'getstocksapp:wallet' object.id %}?action=delete_wallet">
-            {% csrf_token %}
-            <input type="hidden" name="delete_wallet_button" value="clicked">
-            <button class="custom-button" type="submit">Delete Wallet</button>
-        </form>
-    </div>
+
+<a href="{% url 'getstocksapp:wallet_drop_guest' object.id user.id %}">
+    <button class="custom-button" style ="margin-top: 2%;"type="button">Leave Wallet</button>
+</a>
+
 {% endblock %}
 

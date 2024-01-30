@@ -35,11 +35,14 @@ class Ticker(models.Model):
     full_data = models.BooleanField(default=False)
     for_display = models.BooleanField(default=False)
 
+
     class Meta:
         unique_together = ('ticker_name', 'origin_market')
 
+
     def __str__(self) -> str:
         return self.ticker_name
+
 
     def download_data(self):
         if not self.data_fetched:
@@ -58,6 +61,7 @@ class Ticker(models.Model):
             self.data_fetched= True
             self.save()
 
+
     def verify_full_data(self):
         d = NO_DATA
         self.full_data = all([
@@ -72,6 +76,7 @@ class Ticker(models.Model):
         )
         self.save()
     
+
     def set_for_display(self):
         self.for_display = True
         self.save()
@@ -80,6 +85,8 @@ class Ticker(models.Model):
 class Wallet(models.Model):
     owner = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=200, blank=True)
+    guests = models.ManyToManyField(User, related_name='guest_wallets', blank=True)
+
 
     def __str__(self) -> str:
         return self.name
@@ -99,8 +106,10 @@ class WalletRecord(models.Model):
     creation_time = models.DateTimeField(default=timezone.now)
     init_price = models.FloatField(default=0.0)
 
+
     def __str__(self) -> str:
-        return 'wallet record'
+        return self.name
+
 
 @receiver(pre_save, sender=WalletRecord)
 def wallet_pre_save(sender, instance, **kwargs):

@@ -9,7 +9,7 @@
     <ul>
         {% for market in markets %}
         <a href="{% url 'getstocksapp:marketreview' market.id %}">
-            <img style = "margin-left: -35px; width: 80px; height: 80px; border: 5px solid #ff7c11;" src="{{ market.logo_img.url }}" alt="{{market.name}}">
+            <img style = "margin-left: -35px; width: 80px; height: 80px; border: 5px inset #ff7c11;" src="{{ market.logo_img.url }}" alt="{{market.name}}">
         </a>
         {% endfor %}  
     </ul>

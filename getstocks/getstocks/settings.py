@@ -57,6 +57,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'getstocks.urls'
+# ROOT_URLCONF = 'getstocksapp.urls'
+
 LOGOUT_REDIRECT_URL = '/'
 TEMPLATES = [
     {

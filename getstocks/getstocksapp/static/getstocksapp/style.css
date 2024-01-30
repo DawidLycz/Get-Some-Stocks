@@ -240,13 +240,59 @@ button:hover {
     border: 5px inset gold;
 }
 
+.user-wallet-guest-cell{
+    font-size: 270%; 
+    color: gold; 
+    margin-top: 1%;
+
+    background-color: rgb(116, 116, 116);
+    border: 5px inset gold;
+}
+
 .user-wallet-cell:hover{
+    background-color: rgb(255, 145, 0);
+}
+
+.user-wallet-guest-cell:hover{
     background-color: rgb(255, 145, 0);
 }
 
 .profile_data_container{
     margin-left: 20%; 
     margin-right: 20%;
+}
+
+/* Wallet */
+
+.wallet-title-box{
+    font-size: 300%;
+    margin-left: 10%;
+    width: 80%;
+    color: gold; 
+    border: 5px inset gold;
+    background-color: rgb(16, 0, 46);
+}
+
+.wallet-title-box-label{
+    position: relative;
+    left: 0%;
+    top:0%;
+    background-color: rgb(29, 7, 109);
+    border: 5px inset gold;
+    color: gold; 
+    text-align: center;
+}
+
+.wallet-title-box-content{
+    display: flex;
+    left: 0%;
+    top: 0%
+}
+
+
+.wallet-title-box-list{
+    font-size: 50%;
+    color:#fa7000;
 }
 
 .wallet-record-cell{

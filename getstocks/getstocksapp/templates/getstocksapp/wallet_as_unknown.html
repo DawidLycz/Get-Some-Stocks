@@ -1,0 +1,15 @@
+{% extends 'getstocksapp/base.html' %}
+
+{% block title %}
+    Wallet
+{% endblock %}
+
+{% block content %}
+<div class="wallet-title-box">
+    <div class="wallet-title-box-label">{{ object.name }}</div>
+        <p style="margin-top: 0%; text-align: center;">
+            This wallet is owned by {{ wallet.owner }}. Unfortunately, you don't have permission to view its contents.
+        </p>
+    </div>
+{% endblock %}
+

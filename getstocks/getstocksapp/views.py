@@ -252,6 +252,9 @@ class AdvisorInfo(generic.TemplateView):
         return context
 
 
+############### Authorisation ##############
+
+
 class RegistrationView(generic.TemplateView):
     template_name = 'getstocksapp/registration.html'
 
@@ -309,6 +312,8 @@ class UserProfileView(generic.DetailView):
 
         context['user_data'] = list(zip(field_names, field_values))
         context['wallets'] = Wallet.objects.filter(owner=user)
+        context['wallets_as_guest'] =  Wallet.objects.filter(guests=user)
+
         return context
     
     def post(self, request, *args, **kwargs):
@@ -341,15 +346,20 @@ class UserProfileEditView(LoginRequiredMixin, UpdateView):
         return self.request.user
 
 
+################# Wallet #################
+
+
 class WalletView(generic.DetailView):
     model = Wallet
-    template_name = 'getstocksapp/wallet.html'
+    template_name = 'getstocksapp/wallet_as_unknown.html'
 
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         wallet = self.get_object()
         related_records = WalletRecord.objects.filter(wallet = wallet)
         context['wallet_id'] = wallet.id
+        context['guests'] = wallet.guests.all()
+        total_wealth_in_currencies = {}
         if related_records:
             context['related_records'] = related_records
             tickers_names = [record.ticker.ticker_name for record in related_records]
@@ -361,8 +371,22 @@ class WalletView(generic.DetailView):
             total_init_values = [(record.quantity * record.init_price) for record in related_records]
             total_growths = [total_value - total_init_value for total_value, total_init_value in zip(total_values, total_init_values)]
             context['records_data'] = list(zip(related_records, prices, growths, total_values, total_growths))
-
+            for price, currency in zip(total_values, tickers_currencies):
+                value = total_wealth_in_currencies.get(currency, 0)
+                total_wealth_in_currencies[currency] = value + price
+            context['wealth_by_currencies'] = total_wealth_in_currencies
         return context
+    
+    def get_template_names(self):
+        wallet = self.get_object()
+        user = self.request.user
+        
+        if wallet.owner == user:
+            return ['getstocksapp/wallet_as_owner.html']
+        elif user in wallet.guests.all():
+            return ['getstocksapp/wallet_as_guest.html']
+        
+        return super().get_template_names()
     
     def post(self, request, *args, **kwargs):
         
@@ -450,17 +474,34 @@ class WalletInviteView(generic.FormView):
 
     def form_valid(self, form):
         wallet = Wallet.objects.get(pk=self.kwargs['pk'])
-        user = form.cleaned_data['user']
-        print (user)
+        user = form.cleaned_data['guests']
+        wallet.guests.add(user)
         return redirect('getstocksapp:wallet', pk=wallet.id)
+
+
+class WalletDropGuestView(generic.TemplateView):
+    template_name = 'getstocksapp/wallet_drop_guest.html'
+
+    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
+        context = super().get_context_data(**kwargs)
+        context['wallet'] = Wallet.objects.get(pk=self.kwargs['pk1'])
+        context['guest'] = User.objects.get(pk=self.kwargs['pk2'])
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        wallet = Wallet.objects.get(pk=self.kwargs['pk1'])
+        guest = User.objects.get(pk=self.kwargs['pk2'])
+        wallet.guests.remove(guest)
+        wallet.save()
+        return redirect('getstocksapp:profile', pk = self.request.user.id)
 
 class WalletDeleteRecordView(generic.FormView):
     template_name = 'getstocksapp/wallet_delete_record.html'
     form_class = WalletRecordForm
 
+
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
-        record_id = self.kwargs['pk']
         context['record'] = WalletRecord.objects.get(pk=self.kwargs['pk'])
         return context
     

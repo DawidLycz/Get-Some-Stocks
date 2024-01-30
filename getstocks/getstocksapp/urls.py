@@ -28,6 +28,6 @@ urlpatterns = [
     path('wallet_edit_record<int:pk>', views.WalletEditRecordView.as_view(), name='wallet_edit_record'),
     path('wallet_transfer_record<int:pk>', views.WalletTransferRecordView.as_view(), name='wallet_transfer_record'),
     path('wallet_delete_record<int:pk>', views.WalletDeleteRecordView.as_view(), name='wallet_delete_record'),
-
+    path('wallet_drop_guest/<int:pk1>/<int:pk2>/', views.WalletDropGuestView.as_view(), name='wallet_drop_guest'),
 ]
 

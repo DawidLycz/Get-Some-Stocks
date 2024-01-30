@@ -5,5 +5,13 @@
 {% endblock %}
 
 {% block content %}
+<h2 style="font-size: 500%; color: gold; text-align: center; ">{{wallet.name}}</h2>
+<form method="post">
+    {% csrf_token %}
+    {{ form.as_p }}
+    <button class="custom-button" style="margin-top: 1%;" type="submit">Invite</button>
+    <a href="{% url 'getstocksapp:wallet' wallet.id %}">
+      <button class="custom-button" style="margin-top: 1%;" type="button">Cancel</button>
+    </a>
 
 {% endblock %}

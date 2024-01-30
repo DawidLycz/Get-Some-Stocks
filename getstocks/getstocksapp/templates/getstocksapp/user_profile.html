@@ -17,11 +17,24 @@
                 </div>
             </a>
         {% endfor %}
-    <form method="post" action="{% url 'getstocksapp:profile' user.id %}">
-        {% csrf_token %}
-        <button class="custom-button" type="submit">Create New Wallet</button>
-    </form>
+        <form method="post" action="{% url 'getstocksapp:profile' user.id %}">
+            {% csrf_token %}
+            <button class="custom-button" style="margin-top: 5%;" type="submit">Create New Wallet</button>
+        </form>
     </div>
+    {% if wallets_as_guest %}
+    <div class="profile_data_container">
+        <p style="font-size: 350%; color: gold; margin-left: 20%;">Wallets you are guest in:</p>
+        {% for wallet in wallets_as_guest %}
+            <a href="{% url 'getstocksapp:wallet' wallet.id %}">
+                <div class="user-wallet-guest-cell">
+                    <span>{{ wallet.name }}</span>
+                    <span style="float:right; color:#fa7000;">{{ wallet.owner }}</span>
+                </div>
+            </a>
+        {% endfor %}
+    </div>
+    {% endif %}
     <div class="profile_data_container">
         <p style="font-size: 350%; color: gold; margin-left: 20%;">User data:</p>
         {% for name, value in user_data %}

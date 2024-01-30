@@ -10,7 +10,7 @@ class CSVUploadForm(forms.Form):
 
 
 class CustomUserCreationForm(UserCreationForm):
-    email = forms.EmailField(label='Email')
+    email = forms.EmailField(label='Email', required=False)
 
     class Meta:
         model = User
@@ -70,7 +70,7 @@ class WalletEditForm(forms.ModelForm):
 
 
 class WalletInviteForm(forms.ModelForm):
-    guest = forms.ModelChoiceField
+    guests = forms.ModelChoiceField(queryset=User.objects.none(), label='Guest')
 
     class Meta:
         model = Wallet
@@ -78,8 +78,8 @@ class WalletInviteForm(forms.ModelForm):
 
     def __init__(self, *args, user=None, ticker_id=None, **kwargs):
         super(WalletInviteForm, self).__init__(*args, **kwargs)
-        self.fields['guest'].queryset = User.objects.all()
-        self.fields['guest'].widget.attrs['class'] = 'custom-form-field'
+        self.fields['guests'].queryset = User.objects.exclude(pk=user.pk)
+        self.fields['guests'].widget.attrs['class'] = 'custom-form-field'
 
 
 class WalletRecordForm(forms.ModelForm):
