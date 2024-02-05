@@ -106,7 +106,7 @@ class MarketReview(generic.DetailView):
         context = super().get_context_data(**kwargs)
         market = self.get_object()
         tickers = Ticker.objects.filter(origin_market=market, for_display=True)
-        sorter = self.request.GET.get('sort_by')
+        sorter = self.request.GET.get('sort-by')
         
         if not sorter:
             sorter = 'company_name'
@@ -409,7 +409,7 @@ class WalletAddView(generic.FormView):
         context = super().get_context_data(**kwargs)
         
         context['available_wallets'] = Wallet.objects.filter(owner=self.request.user)
-        ticker_id = self.request.GET.get('ticker_id')
+        ticker_id = self.request.GET.get('ticker-id')
         context['ticker'] = Ticker.objects.get(id=ticker_id)
 
         return context
@@ -422,7 +422,7 @@ class WalletAddView(generic.FormView):
         record.quantity = form.cleaned_data.get('quantity', 1)
         record.wallet = wallet
 
-        ticker_id = self.request.GET.get('ticker_id')
+        ticker_id = self.request.GET.get('ticker-id')
         price =  self.request.GET.get('price')
         record.init_price = price
         ticker = Ticker.objects.get(id=ticker_id)
@@ -482,18 +482,21 @@ class WalletInviteView(generic.FormView):
 class WalletDropGuestView(generic.TemplateView):
     template_name = 'getstocksapp/wallet_drop_guest.html'
 
+
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         context['wallet'] = Wallet.objects.get(pk=self.kwargs['pk1'])
         context['guest'] = User.objects.get(pk=self.kwargs['pk2'])
         return context
-    
+
+
     def post(self, request, *args, **kwargs):
         wallet = Wallet.objects.get(pk=self.kwargs['pk1'])
         guest = User.objects.get(pk=self.kwargs['pk2'])
         wallet.guests.remove(guest)
         wallet.save()
         return redirect('getstocksapp:profile', pk = self.request.user.id)
+
 
 class WalletDeleteRecordView(generic.FormView):
     template_name = 'getstocksapp/wallet_delete_record.html'
@@ -554,5 +557,4 @@ class WalletTransferRecordView(generic.FormView):
         wallet = form.cleaned_data['wallet']
         record.wallet = wallet
         record.save()
-        
         return redirect('getstocksapp:wallet', pk=record.wallet.id)

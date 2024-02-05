@@ -267,6 +267,8 @@ button:hover {
 .wallet-title-box{
     font-size: 300%;
     margin-left: 10%;
+    margin-top:5%;
+    margin-bottom:5%;
     width: 80%;
     color: gold; 
     border: 5px inset gold;

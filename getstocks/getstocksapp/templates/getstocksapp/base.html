@@ -11,7 +11,7 @@
         <nav>
             <ul style="margin-left:15%;">
                 <li><a href="{% url 'getstocksapp:home' %}">Homepage</a></li>
-                <li><a href="{% url 'getstocksapp:about_us' %}">About us</a></li>
+                <li><a href="{% url 'getstocksapp:about-us' %}">About us</a></li>
                 {% if user.is_authenticated %}
                     <li><a href="{% url 'getstocksapp:logoutconfirm' %}">Log out</a></li>
                     <li style="float:right; color:#fa7000;">Logged as: {{user}}</li>

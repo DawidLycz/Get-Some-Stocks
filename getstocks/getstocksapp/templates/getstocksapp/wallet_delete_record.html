@@ -9,7 +9,7 @@
 <h2 style="font-size: 400%; color: gold; text-align: center; ">Are you sure you want to remove this record from your wallet?</h2>
 
 <div>
-    <form method="post" action="{% url 'getstocksapp:wallet_delete_record' record.id %}">
+    <form method="post">
         {% csrf_token %}
         <input type="hidden" name="delete_record_button" value="clicked">
         <button class="custom-button" type="submit">Delete Record</button>

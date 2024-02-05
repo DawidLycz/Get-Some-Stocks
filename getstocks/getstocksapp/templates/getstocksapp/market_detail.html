@@ -16,9 +16,9 @@
         <tr>
             {% for sorter, name in table_columns %}
                 {% if sorter == current_sorter %}
-                    <th><a style="color: rgb(255, 102, 0);" href="{% url 'getstocksapp:marketreview' market.id %}?sort_by=-{{sorter}}">{{name}}</a></th>
+                    <th><a style="color: rgb(255, 102, 0);" href="{% url 'getstocksapp:marketreview' market.id %}?sort-by=-{{sorter}}">{{name}}</a></th>
                 {% else %}
-                    <th><a style="color: rgb(255, 102, 0);" href="{% url 'getstocksapp:marketreview' market.id %}?sort_by={{sorter}}">{{name}}</a></th>
+                    <th><a style="color: rgb(255, 102, 0);" href="{% url 'getstocksapp:marketreview' market.id %}?sort-by={{sorter}}">{{name}}</a></th>
                 {% endif %}
             {% endfor %}
             <th width=200px>Move</th>

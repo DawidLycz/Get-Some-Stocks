@@ -14,7 +14,7 @@
             {% if guests %}
                 <span>Currently, the wallet contains the following guests:</span>
             {% for guest in guests %}
-                <a href="{% url 'getstocksapp:wallet_drop_guest' object.id guest.id %}"><span style="color:#ff7c11">{{ guest }} ,</span></a>
+                <a href="{% url 'getstocksapp:wallet-drop-guest' object.id guest.id %}"><span style="color:#ff7c11">{{ guest }} ,</span></a>
             {% endfor %}
             {% else %}
                 <span>There are no guests in this wallet</span>
@@ -34,13 +34,13 @@
         {% for record, price, growth_unit, total_value, total_growth in records_data %}
         <div class="wallet-record-cell">
                 <div class="wallet-record-cell-label">
-                    <a style="color:gold" href="{% url 'getstocksapp:wallet_delete_record' record.id %}">
+                    <a style="color:gold" href="{% url 'getstocksapp:wallet-delete-record' record.id %}">
                         <div class="wallet-record-cell-cross"></div>
                     </a>
-                    <a style="color:gold" href="{% url 'getstocksapp:wallet_edit_record' record.id %}">
+                    <a style="color:gold" href="{% url 'getstocksapp:wallet-edit-record' record.id %}">
                         <div class="wallet-record-cell-edit"></div>
                     </a>
-                    <a style="color:gold" href="{% url 'getstocksapp:wallet_transfer_record' record.id %}">
+                    <a style="color:gold" href="{% url 'getstocksapp:wallet-transfer-record' record.id %}">
                         <div class="wallet-record-cell-transfer"></div>
                     </a>
                     <a style="color:gold" href="{% url 'getstocksapp:tickerreview' record.ticker.id %}">
@@ -83,13 +83,13 @@
     </a>
 {% endif %}
     <div>
-        <a href="{% url 'getstocksapp:wallet_invite' object.id %}">
+        <a href="{% url 'getstocksapp:wallet-invite' object.id %}">
             <button class="custom-button" type="button">Invite to Wallet</button>
         </a>
-        <a href="{% url 'getstocksapp:wallet_edit' object.id %}">
+        <a href="{% url 'getstocksapp:wallet-edit' object.id %}">
             <button class="custom-button" type="button">Edit Wallet</button>
         </a>
-        <form method="post" action="{% url 'getstocksapp:wallet' object.id %}?action=delete_wallet">
+        <form method="post">
             {% csrf_token %}
             <input type="hidden" name="delete_wallet_button" value="clicked">
             <button class="custom-button" type="submit">Delete Wallet</button>
