@@ -228,23 +228,22 @@ class AdvisorInfo(generic.TemplateView):
         context = super().get_context_data(**kwargs)
         advisor = self.request.GET.get('advisor')
 
-        match advisor:
-            case "Single_moving_average":
-                advisor_info = strategies_info["single_moving_average"]
-                advisor_image_url = "/static/getstocksapp/images/advisor_img1.png"
-            case "Double_moving_average":
-                advisor_info = strategies_info["double_moving_average"]
-                advisor_image_url = "/static/getstocksapp/images/advisor_img2.png"
-            case "RSI":
-                advisor_info = strategies_info["rsi"]
-                advisor_image_url = "/static/getstocksapp/images/advisor_img3.png"
-            case "Mean_reversion":
-                advisor_info = strategies_info["mean_reversion"]
-                advisor_image_url = "/static/getstocksapp/images/advisor_img4.png"
-            case _:
-                advisor = "Unknown"
-                advisor_info = "Unknown Advisor"
-                advisor_image_url = "/static/getstocksapp/images/advisor_img1.png"
+        if advisor == "Single-moving-average":
+            advisor_info = strategies_info["single_moving_average"]
+            advisor_image_url = "/static/getstocksapp/images/advisor_img1.png"
+        if advisor == "Single-moving-average":
+            advisor_info = strategies_info["double_moving_average"]
+            advisor_image_url = "/static/getstocksapp/images/advisor_img2.png"
+        if advisor == "RSI":
+            advisor_info = strategies_info["rsi"]
+            advisor_image_url = "/static/getstocksapp/images/advisor_img3.png"
+        if advisor == "Mean-reversion":
+            advisor_info = strategies_info["mean_reversion"]
+            advisor_image_url = "/static/getstocksapp/images/advisor_img4.png"
+        else:
+            advisor = "Unknown"
+            advisor_info = "Unknown Advisor"
+            advisor_image_url = "/static/getstocksapp/images/advisor_img1.png"
         
         context["title"] = advisor.replace("_", " ")
         context["advisor_info"] = advisor_info
