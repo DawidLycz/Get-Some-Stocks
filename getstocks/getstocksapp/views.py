@@ -209,16 +209,6 @@ class AboutUs(generic.TemplateView):
     template_name = "getstocksapp/about_us.html"
 
 
-class Services(generic.TemplateView):
-
-    template_name = "getstocksapp/services.html"
-
-
-class Contact(generic.TemplateView):
-
-    template_name = "getstocksapp/contact.html"
-
-
 class AdvisorInfo(generic.TemplateView):
 
     template_name = "getstocksapp/advisor_info.html"

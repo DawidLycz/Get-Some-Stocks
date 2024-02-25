@@ -27,7 +27,7 @@ DATABASE_PASSWORD = 'Y7y7y7y7!!'
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = []
 
@@ -36,7 +36,6 @@ ALLOWED_HOSTS = []
 
 INSTALLED_APPS = [
     'getstocksapp.apps.GetstocksappConfig',
-    # 'getstocksapp',
     'admin_extra_buttons',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -77,7 +76,6 @@ TEMPLATES = [
 ]
 
 WSGI_APPLICATION = 'getstocks.wsgi.application'
-
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
