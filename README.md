@@ -1,5 +1,5 @@
 # Get-Some-Stocks
-Website aplication for buying, selling, and reviewing stocks.
+Website aplication reviewing stocks. Allows to set up wallet, and track stock prices.
 
 Visit website:
 

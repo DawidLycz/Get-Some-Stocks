@@ -56,7 +56,6 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'getstocks.urls'
-# ROOT_URLCONF = 'getstocksapp.urls'
 
 LOGOUT_REDIRECT_URL = '/'
 TEMPLATES = [
@@ -79,20 +78,33 @@ WSGI_APPLICATION = 'getstocks.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'getstock_db',
-        'USER': 'getstocks_admin',
-        'PASSWORD': DATABASE_PASSWORD,
-        'HOST': 'localhost',
-        'PORT': '3306',
-        'TEST': {
-            'NAME': 'test_getstock_db',
-        },
-    
-}
+if 'PYTHONANYWHERE_DOMAIN' in os.environ:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'DawidLycz$default',
+            'USER': 'DawidLycz',
+            'PASSWORD': DATABASE_PASSWORD,
+            'HOST': 'DawidLycz.mysql.pythonanywhere-services.com',
+            'PORT': '3306',
+            'TEST': {
+                'NAME': 'test_getstock_db',
+            },
+        }
+    }
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'getstock_db',
+            'USER': 'getstocks_admin',
+            'PASSWORD': DATABASE_PASSWORD,
+            'HOST': 'localhost',
+            'PORT': '3306',
+            'TEST': {
+                'NAME': 'test_getstock_db',
+            },      
+        }
     }
 
 # Password validation
