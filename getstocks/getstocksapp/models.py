@@ -30,7 +30,7 @@ class Ticker(models.Model):
     exchange = models.CharField(max_length=255, default=NO_DATA)
     address = models.CharField(max_length=255, default=NO_DATA)
     capitalization = models.BigIntegerField(default=0)
-    origin_market = models.ForeignKey(Market, on_delete=models.CASCADE)
+    origin_market = models.ForeignKey(Market, related_name='tickers', on_delete=models.CASCADE)
     data_fetched = models.BooleanField(default=False)
     full_data = models.BooleanField(default=False)
     for_display = models.BooleanField(default=False)

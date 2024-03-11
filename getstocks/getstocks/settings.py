@@ -35,6 +35,7 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
+    'rest_framework',
     'getstocksapp.apps.GetstocksappConfig',
     'admin_extra_buttons',
     'django.contrib.admin',

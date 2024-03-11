@@ -20,12 +20,22 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth import login, logout
+from django.http import Http404
 from django.shortcuts import render, redirect
 from django.views import View
+
+from rest_framework import status, mixins, generics, permissions, renderers, viewsets, filters
+from rest_framework.permissions import IsAdminUser
+from rest_framework.response import Response
+from rest_framework.decorators import api_view, action
+from rest_framework.parsers import JSONParser
+from rest_framework.reverse import reverse as drf_reverse
 
 from .models import Market, Ticker, Wallet, WalletRecord
 from .forms import CSVUploadForm, CustomUserCreationForm, CustomAuthenticationForm, UserProfileEditForm, WalletRecordForm, RecordChangeWalletForm, WalletEditForm, WalletInviteForm, RecordEditForm
 
+from .serializers import *
+from .permissions import IsAdminOrReadOnly
 from .trade_logic import *
 from .data_downloaders.yfinance_data import get_stock_data, get_prices_of_many_tickers
 
@@ -547,3 +557,49 @@ class WalletTransferRecordView(generic.FormView):
         record.wallet = wallet
         record.save()
         return redirect('getstocksapp:wallet', pk=record.wallet.id)
+
+########################### API
+
+@api_view(['GET'])
+def api_root(request, format=None):
+    return Response({
+        'markets': drf_reverse('getstocksapp:market-list', request=request, format=format),
+        'tickers': drf_reverse('getstocksapp:ticker-list', request=request, format=format),
+    })
+
+class ApiMarketViewSet(viewsets.ModelViewSet):
+    """This viewset automatically provides 'list' and 'retrive' actions."""
+    queryset = Market.objects.all()
+    serializer_class = MarketSerializer
+
+class ApiTickerViewSet(viewsets.ModelViewSet):
+    """This ViewSet automatically provides 'list', 'create', 'retrive', 'update', and 'destroy' actions
+    Additionally we also provide an extra 'highlight' action"""
+
+    queryset = Ticker.objects.filter(for_display=True)
+    serializer_class = TickerSerializer
+    permission_classes = [IsAdminOrReadOnly]
+
+
+# class ApiMarketListView(generics.ListCreateAPIView):
+#     queryset = Market.objects.all()
+#     serializer_class = MarketListSerializer
+#     permission_classes = [IsAdminOrReadOnly]
+
+
+# class ApiMarketDetailView(generics.RetrieveUpdateDestroyAPIView):
+#     queryset = Market.objects.all()
+#     serializer_class = MarketSerializer
+#     permission_classes = [IsAdminOrReadOnly]
+
+
+# class ApiTickerListView(generics.ListCreateAPIView):
+#     queryset = Ticker.objects.filter(for_display=True)
+#     serializer_class = TickerListSerializer
+#     permission_classes = [IsAdminOrReadOnly]
+
+
+# class ApiTickerDetailView(generics.RetrieveUpdateDestroyAPIView):
+#     queryset = Ticker.objects.all()
+#     serializer_class = TickerDetailSerializer
+#     permission_classes = [IsAdminOrReadOnly]

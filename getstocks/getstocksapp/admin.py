@@ -32,7 +32,7 @@ class MarketAdmin(ExtraButtonsMixin, admin.ModelAdmin):
     def upload_csv(self, button):
         original = button.context['original']
         button.label = f"Upload CSV data for {original.name}."
-        button.href = reverse('getstocksapp:upload_csv')
+        button.href = reverse('getstocksapp:upload-csv')
 
 
 

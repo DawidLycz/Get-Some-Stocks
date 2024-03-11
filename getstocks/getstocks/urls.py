@@ -21,7 +21,9 @@ app_name = "getstocksapp"
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('getsomestocks/', include('getstocksapp.urls'))
+    path('', include('getstocksapp.urls')),
+    path('api-auth/', include('rest_framework.urls'))
+
 ]
 
 from django.conf import settings
