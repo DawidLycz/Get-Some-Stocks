@@ -6,7 +6,7 @@ from .data_downloaders.alphavantage_data import get_ticker_info_obj
 from django.utils import timezone
 
 
-NO_DATA = "No data"
+NO_DATA = ["No data", "None", "Not available", "Unknown", "N/A", "-", "NaN"]
 
 
 class Market(models.Model):
@@ -22,13 +22,13 @@ class Market(models.Model):
 
 class Ticker(models.Model):
     ticker_name = models.CharField(max_length=200)
-    company_name = models.CharField(max_length=255, default=NO_DATA)
+    company_name = models.CharField(max_length=255, default=NO_DATA[0])
     company_description = models.TextField(default='', blank=True)
-    currency = models.CharField(max_length=255, default=NO_DATA)
-    sector = models.CharField(max_length=255, default=NO_DATA)
-    industry = models.CharField(max_length=255, default=NO_DATA)
-    exchange = models.CharField(max_length=255, default=NO_DATA)
-    address = models.CharField(max_length=255, default=NO_DATA)
+    currency = models.CharField(max_length=255, default=NO_DATA[0])
+    sector = models.CharField(max_length=255, default=NO_DATA[0])
+    industry = models.CharField(max_length=255, default=NO_DATA[0])
+    exchange = models.CharField(max_length=255, default=NO_DATA[0])
+    address = models.CharField(max_length=255, default=NO_DATA[0])
     capitalization = models.BigIntegerField(default=0)
     origin_market = models.ForeignKey(Market, related_name='tickers', on_delete=models.CASCADE)
     data_fetched = models.BooleanField(default=False)
@@ -43,6 +43,8 @@ class Ticker(models.Model):
     def __str__(self) -> str:
         return self.ticker_name
 
+    def __repr__(self) -> str:
+        return self.ticker_name
 
     def download_data(self):
         if not self.data_fetched:
@@ -63,17 +65,10 @@ class Ticker(models.Model):
 
 
     def verify_full_data(self):
-        d = NO_DATA
-        self.full_data = all([
-            self.company_name != d,
-            self.company_description != d,
-            self.currency != d,
-            self.sector != d,
-            self.industry != d,
-            self.exchange != d,
-            self.address != d,
-            self.capitalization != 0,]
-        )
+        self.full_data = True
+        for value in self.__dict__.values():
+            if value in NO_DATA:
+                self.full_data = False
         self.save()
     
 
@@ -83,7 +78,7 @@ class Ticker(models.Model):
 
 
 class Wallet(models.Model):
-    owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    owner = models.ForeignKey(User, related_name='wallets', on_delete=models.CASCADE)
     name = models.CharField(max_length=200, blank=True)
     guests = models.ManyToManyField(User, related_name='guest_wallets', blank=True)
 
@@ -100,8 +95,8 @@ def wallet_pre_save(sender, instance, **kwargs):
 
 class WalletRecord(models.Model):
     name = models.CharField(max_length=200, blank=True)
-    wallet = models.ForeignKey(Wallet, on_delete=models.CASCADE)
-    ticker = models.ForeignKey(Ticker, on_delete=models.CASCADE)
+    wallet = models.ForeignKey(Wallet, related_name='records',  on_delete=models.CASCADE)
+    ticker = models.ForeignKey(Ticker, related_name='wallet_records', on_delete=models.CASCADE)
     quantity = models.IntegerField(default=1)
     creation_time = models.DateTimeField(default=timezone.now)
     init_price = models.FloatField(default=0.0)

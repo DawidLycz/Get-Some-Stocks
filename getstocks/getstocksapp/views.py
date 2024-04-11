@@ -25,6 +25,7 @@ from django.shortcuts import render, redirect
 from django.views import View
 
 from rest_framework import status, mixins, generics, permissions, renderers, viewsets, filters
+from rest_framework import generics as drfgenerics
 from rest_framework.permissions import IsAdminUser
 from rest_framework.response import Response
 from rest_framework.decorators import api_view, action
@@ -35,7 +36,7 @@ from .models import Market, Ticker, Wallet, WalletRecord
 from .forms import CSVUploadForm, CustomUserCreationForm, CustomAuthenticationForm, UserProfileEditForm, WalletRecordForm, RecordChangeWalletForm, WalletEditForm, WalletInviteForm, RecordEditForm
 
 from .serializers import *
-from .permissions import IsAdminOrReadOnly
+from .permissions import IsAdminOrReadOnly, IsOwnerOrGuestInWallet, IsOwnerOrGuestInRecord
 from .trade_logic import *
 from .data_downloaders.yfinance_data import get_stock_data, get_prices_of_many_tickers
 
@@ -147,10 +148,6 @@ class TickerReview(generic.DetailView):
         data = get_stock_data(ticker=ticker.ticker_name, period=period)
         context["data_availble"] = not data.empty
         if not data.empty:
-            signals_smas = analyze_by_single_moving_average_strategy(data)
-            signals_dmas = analyze_by_double_moving_averages_strategy(data)
-            signals_rsis = analyze_by_rsi_strategy(data)
-            signals_mrs = analyze_by_mean_reversion_strategy(data)
             context['chart_periods'] = [
                 (0, "All times", "max"),
                 (10, "10 Years", "10y"), 
@@ -163,13 +160,12 @@ class TickerReview(generic.DetailView):
                 (80, "5 Days", "5d"),
                 (90, "1 Day", "1d")
                 ]
-
             context['current_price'] = data.iloc[-1]['Close']
             context['chart'] = create_chart(data, ticker, period)
-            context['advice_single_moving_average'] = advice_move(signals_smas)
-            context['advice_double_moving_average'] = advice_move(signals_dmas)
-            context['advice_rsi'] = advice_move(signals_rsis)
-            context['advice_mean_reversion'] = advice_move(signals_mrs)
+            context['advice_single_moving_average'] = analyze_financial_data(1, data)
+            context['advice_double_moving_average'] = analyze_financial_data(2, data)
+            context['advice_rsi'] = analyze_financial_data(3, data)
+            context['advice_mean_reversion'] = analyze_financial_data(4, data)
             context['info_single_moving_average'] = strategies_info["single_moving_average"]
             context['info_double_moving_average'] = strategies_info["double_moving_average"]
             context['info_rsi'] = strategies_info["rsi"]
@@ -565,41 +561,190 @@ def api_root(request, format=None):
     return Response({
         'markets': drf_reverse('getstocksapp:market-list', request=request, format=format),
         'tickers': drf_reverse('getstocksapp:ticker-list', request=request, format=format),
+        'users': drf_reverse('getstocksapp:user-list', request=request, format=format),
+        'wallets': drf_reverse('getstocksapp:wallet-list', request=request, format=format),
+        'wallet records': drf_reverse('getstocksapp:wallet-record-list', request=request, format=format),
+
     })
 
-class ApiMarketViewSet(viewsets.ModelViewSet):
-    """This viewset automatically provides 'list' and 'retrive' actions."""
+
+class ApiMarketListView(mixins.ListModelMixin, mixins.CreateModelMixin, drfgenerics.GenericAPIView):
     queryset = Market.objects.all()
     serializer_class = MarketSerializer
+    permission_classes = [IsAdminOrReadOnly]
 
-class ApiTickerViewSet(viewsets.ModelViewSet):
-    """This ViewSet automatically provides 'list', 'create', 'retrive', 'update', and 'destroy' actions
-    Additionally we also provide an extra 'highlight' action"""
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+    
 
+class ApiMarketDetailView(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, drfgenerics.GenericAPIView):
+    queryset = Market.objects.all()
+    serializer_class = MarketSerializer
+    permission_classes = [IsAdminOrReadOnly]
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+    
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+    
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+    
+
+class ApiTickerListView(mixins.ListModelMixin, mixins.CreateModelMixin, drfgenerics.GenericAPIView):
     queryset = Ticker.objects.filter(for_display=True)
     serializer_class = TickerSerializer
     permission_classes = [IsAdminOrReadOnly]
 
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+    
 
-# class ApiMarketListView(generics.ListCreateAPIView):
-#     queryset = Market.objects.all()
-#     serializer_class = MarketListSerializer
-#     permission_classes = [IsAdminOrReadOnly]
+class ApiTickerDetailView(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, drfgenerics.GenericAPIView):
+    queryset = Ticker.objects.all()
+    serializer_class = TickerSerializer
+    permission_classes = [IsAdminOrReadOnly]
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+    
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+    
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
 
 
-# class ApiMarketDetailView(generics.RetrieveUpdateDestroyAPIView):
-#     queryset = Market.objects.all()
-#     serializer_class = MarketSerializer
-#     permission_classes = [IsAdminOrReadOnly]
+class ApiTickerFinancialDataView(drfgenerics.RetrieveAPIView):
+    queryset = Ticker.objects.all()
+    permission_classes = [IsAdminOrReadOnly]
+
+    def get(self, request, *args, **kwargs):
+        try:
+            ticker = self.get_object()
+            
+            data = get_stock_data(ticker=ticker.ticker_name, period='1y')
+            advice_single_moving_average = analyze_financial_data(1, data)
+            advice_double_moving_average = analyze_financial_data(2, data)
+            advice_rsi = analyze_financial_data(3, data)
+            advice_mean_reversion = analyze_financial_data(4, data)
+            print (advice_double_moving_average, type(advice_double_moving_average))
+            advices = {'Single moving average': advice_single_moving_average,
+                       'Double moving average': advice_double_moving_average,
+                       'RSI' : advice_rsi,
+                       'Mean reversion' : advice_mean_reversion} 
+            financial_data = {'Current_price': float(data.iloc[-1]['Close']), 'Advices': advices}
+            data = data.iloc[::-1]
+            for index, row in data.iterrows():
+                financial_data[str(index)] = row.drop('Close').to_dict()
+
+            return Response(financial_data)
+        except:
+            return Response("Data Unavailble")
 
 
-# class ApiTickerListView(generics.ListCreateAPIView):
-#     queryset = Ticker.objects.filter(for_display=True)
-#     serializer_class = TickerListSerializer
-#     permission_classes = [IsAdminOrReadOnly]
+class ApiUserListView(mixins.ListModelMixin, mixins.CreateModelMixin, drfgenerics.GenericAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
 
 
-# class ApiTickerDetailView(generics.RetrieveUpdateDestroyAPIView):
-#     queryset = Ticker.objects.all()
-#     serializer_class = TickerDetailSerializer
-#     permission_classes = [IsAdminOrReadOnly]
+class ApiUserDetailView(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, drfgenerics.GenericAPIView):
+    queryset = User.objects.all()
+    serializer_class = UserSerializer
+    permission_classes = [permissions.IsAdminUser]
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+    
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+    
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+
+class ApiWalletListView(mixins.ListModelMixin, mixins.CreateModelMixin, drfgenerics.GenericAPIView):
+    serializer_class = WalletSerializer
+    permission_classes = [IsOwnerOrGuestInWallet]
+    
+    def get_queryset(self):
+        user = self.request.user
+        if user.is_superuser:
+            return Wallet.objects.all()
+        if user.is_authenticated:
+            queryset1 = Wallet.objects.filter(owner=user)
+            queryset2 = Wallet.objects.filter(guests=user)
+            return queryset1.union(queryset2)
+        else:
+            return Wallet.objects.none()
+
+    def get(self, request, *args, **kwargs):
+        queryset = self.get_queryset()
+        if not queryset.exists():
+            return Response({"detail: You do not have permission to do this."}, status=status.HTTP_403_FORBIDDEN)
+        return self.list(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+    
+
+class ApiWalletDetailView(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, drfgenerics.GenericAPIView):
+    queryset = Wallet.objects.all()
+    serializer_class = WalletSerializer
+    permission_classes = [IsOwnerOrGuestInWallet]
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+    
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+    
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+    
+
+class ApiWalletRecordListView(mixins.ListModelMixin, mixins.CreateModelMixin, drfgenerics.GenericAPIView):
+    queryset = WalletRecord.objects.all()
+    serializer_class = WalletRecordSerializer
+    permission_classes = [IsOwnerOrGuestInRecord]
+
+    def get(self, request, *args, **kwargs):
+        return self.list(request, *args, **kwargs)
+    
+    def post(self, request, *args, **kwargs):
+        return self.create(request, *args, **kwargs)
+    
+
+class ApiWalletRecordDetailView(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, drfgenerics.GenericAPIView):
+    queryset = WalletRecord.objects.all()
+    serializer_class = WalletRecordSerializer
+    permission_classes = [IsOwnerOrGuestInRecord]
+
+
+    def get(self, request, *args, **kwargs):
+        return self.retrieve(request, *args, **kwargs)
+    
+    def put(self, request, *args, **kwargs):
+        return self.update(request, *args, **kwargs)
+    
+    def delete(self, request, *args, **kwargs):
+        return self.destroy(request, *args, **kwargs)
+
+
+class ApiWalletRecordFinancialInfoView(mixins.RetrieveModelMixin, mixins.UpdateModelMixin, mixins.DestroyModelMixin, drfgenerics.GenericAPIView):
+    wallets = Wallet.objects.filter()
+    queryset = WalletRecord.objects.all()

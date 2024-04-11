@@ -6,10 +6,6 @@ from rest_framework.urlpatterns import format_suffix_patterns
 
 
 app_name = "getstocksapp"
-market_list = views.ApiMarketViewSet.as_view({'get': 'list', 'post': 'create'})
-market_detail = views.ApiMarketViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'})
-ticker_list = views.ApiTickerViewSet.as_view({'get': 'list', 'post': 'create'})
-ticker_detail = views.ApiTickerViewSet.as_view({'get': 'retrieve', 'put': 'update', 'patch': 'partial_update', 'delete': 'destroy'})
 
 
 urlpatterns = format_suffix_patterns([
@@ -25,8 +21,8 @@ urlpatterns = format_suffix_patterns([
     path('logout/', views.CustomLogoutView.as_view(), name='logout'),
     path('profile/<int:pk>/', views.UserProfileView.as_view(), name='profile'),
     path('profile/edit/<int:pk>/', views.UserProfileEditView.as_view(), name='profile-edit'),
-    path('wallets/<int:pk>/', views.WalletView.as_view(), name='wallet'),
     path('wallets/add/', views.WalletAddView.as_view(), name='wallet-add'),
+    path('wallets/<int:pk>/', views.WalletView.as_view(), name='wallet'),
     path('wallets/edit/<int:pk>/', views.WalletEditView.as_view(), name='wallet-edit'),
     path('wallets/invite/<int:pk>/', views.WalletInviteView.as_view(), name='wallet-invite'),
     path('wallets/edit/record/<int:pk>/', views.WalletEditRecordView.as_view(), name='wallet-edit-record'),
@@ -35,10 +31,17 @@ urlpatterns = format_suffix_patterns([
     path('wallets/drop-guest/<int:pk1>/<int:pk2>/', views.WalletDropGuestView.as_view(), name='wallet-drop-guest'),
 
     ###############
-    
+
     path('api/', views.api_root, name='api-root'),
-    path('api/market/', market_list, name='market-list'),
-    path('api/market/<int:pk>/', market_detail, name='market-detail'),
-    path('api/ticker/', ticker_list, name='ticker-list'),
-    path('api/ticker/<int:pk>/', ticker_detail, name='ticker-detail'),
+    path('api/markets/', views.ApiMarketListView.as_view(), name='market-list'),
+    path('api/markets/<int:pk>/', views.ApiMarketDetailView.as_view(), name='market-detail'),
+    path('api/tickers/', views.ApiTickerListView.as_view(), name='ticker-list'),
+    path('api/tickers/<int:pk>/', views.ApiTickerDetailView.as_view(), name='ticker-detail'),
+    path('api/tickers/<int:pk>/financialinfo/', views.ApiTickerFinancialDataView.as_view(), name='ticker-financial-info'),
+    path('api/users/', views.ApiUserListView.as_view(), name='user-list'),
+    path('api/users/<int:pk>/', views.ApiUserDetailView.as_view(), name='user-detail'),
+    path('api/wallets/', views.ApiWalletListView.as_view(), name='wallet-list'),
+    path('api/wallets/<int:pk>/', views.ApiWalletDetailView.as_view(), name='wallet-detail'),
+    path('api/wallets/records/', views.ApiWalletRecordListView.as_view(), name='wallet-record-list'),
+    path('api/wallets/records/<int:pk>/', views.ApiWalletRecordDetailView.as_view(), name='wallet-record-detail'),
 ])

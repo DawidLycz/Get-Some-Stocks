@@ -1,16 +1,15 @@
-import yfinance as yf
-import pandas as pd
-from datetime import datetime, timedelta
+from pandas import DataFrame
 
+AVAILABLE_STRATEGIES = ["single_moving_average", 'double_moving_averages', 'rsi', 'mean_reversion']
 
-def analyze_by_single_moving_average_strategy(data: pd.DataFrame, window: int=5) -> pd.DataFrame:
+def get_signals_single_moving_average_strategy(data: DataFrame, window: int=5) -> DataFrame:
     '''
     Function creates new column called signal.
     Calculates moving average of last (default 5) prices and based on that, forms new record to signal.
     If average price of last few days is lower that current day signal become 1.0, 
     but if it's higher, signal becomes -1.0
     '''
-    signals = pd.DataFrame(index=data.index)
+    signals = DataFrame(index=data.index)
     signals['signal'] = 0.0
     signals['rolling_mean'] = data['Close'].rolling(window=window).mean()
     signals.loc[data['Close'] > signals['rolling_mean'], 'signal'] = 1.0
@@ -18,13 +17,13 @@ def analyze_by_single_moving_average_strategy(data: pd.DataFrame, window: int=5)
     data = signals['signal']
     return signals
 
-def analyze_by_double_moving_averages_strategy(data: pd.DataFrame, window1: int=20, window2: int=50) -> pd.DataFrame:
+def get_signals_double_moving_averages_strategy(data: DataFrame, window1: int=20, window2: int=50) -> DataFrame:
     '''
     Function creates new column called signal.
     Calculates two moving averages (default 20 and 50 days) and compares them. 
     If average of shorter period is higher than other, signal becomes 1.0, else it becomes -1.0
     '''
-    signals = pd.DataFrame(index=data.index)
+    signals = DataFrame(index=data.index)
     signals['20_SMA'] = data['Close'].rolling(window=window1).mean()
     signals['50_SMA'] = data['Close'].rolling(window=window2).mean()
     signals['signal'] = 0
@@ -33,7 +32,7 @@ def analyze_by_double_moving_averages_strategy(data: pd.DataFrame, window1: int=
 
     return signals
 
-def analyze_by_rsi_strategy(data: pd.DataFrame, window: int=14, overbought_threshold: int=70, oversold_threshold: int=30) -> pd.DataFrame:    
+def get_signals_rsi_strategy(data: DataFrame, window: int=14, overbought_threshold: int=70, oversold_threshold: int=30) -> DataFrame:    
     '''
     Function creates new column called signal.
     RSI strategy calculates average gain and average loss for specified time period (default 14) 
@@ -42,7 +41,7 @@ def analyze_by_rsi_strategy(data: pd.DataFrame, window: int=14, overbought_thres
     If RSI is below overbought treshold, signal becomes -1.0.
     If RRI is above oversold treshold, signal becomes 1.0.
     '''
-    signals = pd.DataFrame(index=data.index)
+    signals = DataFrame(index=data.index)
     signals['Price Change'] = data['Close'].diff()
     signals['Positive Change'] = signals['Price Change'].apply(lambda x: x if x > 0 else 0)
     signals['Negative Change'] = signals['Price Change'].apply(lambda x: -x if x < 0 else 0)
@@ -55,7 +54,7 @@ def analyze_by_rsi_strategy(data: pd.DataFrame, window: int=14, overbought_thres
     signals.loc[signals['RSI'] < oversold_threshold, 'signal'] = 1.0
     return signals
 
-def analyze_by_mean_reversion_strategy(data: pd.DataFrame, sell_multiplier: float=1.5, buy_multiplier: float=0.75):
+def get_signals_mean_reversion_strategy(data: DataFrame, sell_multiplier: float=1.5, buy_multiplier: float=0.75):
     '''
     Function creates new column called signal.
     Function calculates average value of all records in "Close" column
@@ -63,7 +62,7 @@ def analyze_by_mean_reversion_strategy(data: pd.DataFrame, sell_multiplier: floa
     If price is above sell treshold, signal becomes -1.0
     If price is below buy treshold, signal becomes 1.0
     '''
-    signals = pd.DataFrame(index=data.index)
+    signals = DataFrame(index=data.index)
     average_price = data['Close'].mean()
     sell_treshold = average_price * sell_multiplier
     buy_treshold = average_price * buy_multiplier
@@ -73,7 +72,7 @@ def analyze_by_mean_reversion_strategy(data: pd.DataFrame, sell_multiplier: floa
     return signals
 
 
-def advice_move(signals: pd.DataFrame, ticks: int=3) -> str:
+def advice_move(signals: DataFrame, ticks: int=3) -> str:
     '''
     Functions takes data frame with signal column and calculates average of last few signals (default 3).
     Based on this average, it returns string with advice of next operation.
@@ -89,3 +88,39 @@ def advice_move(signals: pd.DataFrame, ticks: int=3) -> str:
         return "STAND BY"
 
 
+def analyze_financial_data(strategy: str, data: DataFrame, ticks: int=3, **kwargs) -> str:
+    if strategy in ["single_moving_average", "SMA", '1', 1]:
+        try:
+            window = kwargs['window']
+        except KeyError:
+            window = 5
+        signals = get_signals_single_moving_average_strategy(data, window)
+    elif strategy in ['double_moving_averages', 'DMA', "2", 2]:
+        try:
+            window1 = kwargs['window1']
+            window2 = kwargs['window2']
+        except KeyError:
+            window1 = 20
+            window2 = 50
+        signals = get_signals_double_moving_averages_strategy(data, window1, window2)
+    elif strategy in ['rsi', "RSI", "3", 3]:
+        try: 
+            window = kwargs['window']
+            overbought_threshold = kwargs['overbought_threshold']
+            oversold_threshold = kwargs['oversold_threshold']
+        except:
+            window = 14
+            overbought_threshold = 70
+            oversold_threshold = 30
+        signals = get_signals_rsi_strategy(data, window, overbought_threshold, oversold_threshold)
+    elif strategy in ['mean_reversion', 'MR', "4", 4]:
+        try:
+            sell_multiplier = kwargs['sell_multiplier']
+            buy_multiplier = kwargs['buy_multiplier']
+        except:
+            sell_multiplier = 1.5
+            buy_multiplier = 0.75
+        signals = get_signals_mean_reversion_strategy(data, sell_multiplier, buy_multiplier)
+    else:
+        return "Unknown strategy"
+    return advice_move(signals, ticks)
