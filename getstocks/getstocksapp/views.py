@@ -20,7 +20,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LoginView, LogoutView
 from django.contrib.auth import login, logout
-from django.http import Http404
+from django.http import Http404, HttpResponseRedirect
 from django.shortcuts import render, redirect
 from django.views import View
 
@@ -32,7 +32,7 @@ from rest_framework.decorators import api_view, action
 from rest_framework.parsers import JSONParser
 from rest_framework.reverse import reverse as drf_reverse
 
-from .models import Market, Ticker, Wallet, WalletRecord
+from .models import Market, Ticker, Advisor, Wallet, WalletRecord
 from .forms import CSVUploadForm, CustomUserCreationForm, CustomAuthenticationForm, UserProfileEditForm, WalletRecordForm, RecordChangeWalletForm, WalletEditForm, WalletInviteForm, RecordEditForm
 
 from .serializers import *
@@ -107,7 +107,7 @@ class IndexView(generic.TemplateView):
         return context
 
 
-class MarketReview(generic.DetailView):
+class MarketDetailView(generic.DetailView):
     model = Market
     template = "getstocksapp/market_detail.html"
 
@@ -135,19 +135,23 @@ class MarketReview(generic.DetailView):
         return context
     
 
-class TickerReview(generic.DetailView):
+class TickerDetailView(generic.DetailView):
     model = Ticker
     template = "getstocksapp/ticker_detail.html"
     
     def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
         context = super().get_context_data(**kwargs)
         ticker = self.get_object()
+        advisors = Advisor.objects.all()
         period = self.request.GET.get('period')
         if not period:
             period = "1y"
         data = get_stock_data(ticker=ticker.ticker_name, period=period)
         context["data_availble"] = not data.empty
+
         if not data.empty:
+            for advisor in advisors:
+                advisor.advice = advisor.get_advice(data)
             context['chart_periods'] = [
                 (0, "All times", "max"),
                 (10, "10 Years", "10y"), 
@@ -162,14 +166,7 @@ class TickerReview(generic.DetailView):
                 ]
             context['current_price'] = data.iloc[-1]['Close']
             context['chart'] = create_chart(data, ticker, period)
-            context['advice_single_moving_average'] = analyze_financial_data(1, data)
-            context['advice_double_moving_average'] = analyze_financial_data(2, data)
-            context['advice_rsi'] = analyze_financial_data(3, data)
-            context['advice_mean_reversion'] = analyze_financial_data(4, data)
-            context['info_single_moving_average'] = strategies_info["single_moving_average"]
-            context['info_double_moving_average'] = strategies_info["double_moving_average"]
-            context['info_rsi'] = strategies_info["rsi"]
-            context['info_mean_reversion'] = strategies_info["mean_reversion"]
+            context['advisors'] = advisors
             return context
             
 
@@ -245,6 +242,18 @@ class AdvisorInfo(generic.TemplateView):
         context["advisor_info"] = advisor_info
         context["advisor_image_url"] = advisor_image_url
         return context
+
+
+class AdvisorListView(generic.ListView):
+    model = Advisor
+    template = "getstocksapp/advisor_list.html"
+
+
+class AdvisorDetailView(generic.DetailView):
+    model = Advisor
+    context_object_name = "advisor"
+    template = "getstocksapp/advisor_detail.html"
+
 
 
 ############### Authorisation ##############
@@ -341,6 +350,52 @@ class UserProfileEditView(LoginRequiredMixin, UpdateView):
         return self.request.user
 
 
+class AssetsView(generic.ListView):
+    model = Wallet
+    template_name = "getstocksapp/assets.html"
+
+    def get(self, request, *args, **kwargs):
+        user = self.request.user
+        if user.is_superuser:
+            return super().get(self, request, *args, **kwargs)
+        else:
+            return HttpResponseRedirect(reverse('getstocksapp:home'))
+    
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        return context
+
+
+class MyAssetsView(generic.DetailView):
+    model = User
+    template_name = "getstocksapp/my_assets.html"
+    
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        user = self.request.user
+        context['own_wallets'] = Wallet.objects.filter(owner=user)
+        context['wallets_as_guest'] =  Wallet.objects.filter(guests=user)
+        return context
+    
+    def post(self, request, *args, **kwargs):
+        user = self.get_object()
+        already_existing_wallets = Wallet.objects.filter(owner=user)
+        names = [wallet.name for wallet in already_existing_wallets]
+        name = f"{user.username}_wallet"
+        if name in names:
+            base_name = name
+            end_num = 0
+            while True:
+                if name in names:
+                    end_num += 1
+                    name = f'{base_name}_{end_num}'
+                else:
+                    break
+        new_wallet = Wallet(owner=user, name=name)
+        new_wallet.save()
+        return redirect('getstocksapp:my-assets', pk=user.pk)
+    
+    
 ################# Wallet #################
 
 
@@ -388,7 +443,7 @@ class WalletView(generic.DetailView):
         wallet = self.get_object()
         user = wallet.owner
         wallet.delete()
-        return redirect('getstocksapp:profile', pk=user.pk)
+        return redirect('getstocksapp:my-assets', pk=user.pk)
 
 
 class WalletAddView(generic.FormView):
@@ -490,7 +545,7 @@ class WalletDropGuestView(generic.TemplateView):
         guest = User.objects.get(pk=self.kwargs['pk2'])
         wallet.guests.remove(guest)
         wallet.save()
-        return redirect('getstocksapp:profile', pk = self.request.user.id)
+        return redirect('getstocksapp:my-assets', pk = self.request.user.id)
 
 
 class WalletDeleteRecordView(generic.FormView):
@@ -559,11 +614,11 @@ class WalletTransferRecordView(generic.FormView):
 @api_view(['GET'])
 def api_root(request, format=None):
     return Response({
-        'markets': drf_reverse('getstocksapp:market-list', request=request, format=format),
-        'tickers': drf_reverse('getstocksapp:ticker-list', request=request, format=format),
-        'users': drf_reverse('getstocksapp:user-list', request=request, format=format),
-        'wallets': drf_reverse('getstocksapp:wallet-list', request=request, format=format),
-        'wallet records': drf_reverse('getstocksapp:wallet-record-list', request=request, format=format),
+        'markets': drf_reverse('getstocksapp:api-market-list', request=request, format=format),
+        'tickers': drf_reverse('getstocksapp:api-ticker-list', request=request, format=format),
+        'users': drf_reverse('getstocksapp:api-user-list', request=request, format=format),
+        'wallets': drf_reverse('getstocksapp:api-wallet-list', request=request, format=format),
+        'wallet records': drf_reverse('getstocksapp:api-wallet-record-list', request=request, format=format),
 
     })
 
@@ -629,22 +684,21 @@ class ApiTickerFinancialDataView(drfgenerics.RetrieveAPIView):
     def get(self, request, *args, **kwargs):
         try:
             ticker = self.get_object()
-            
             data = get_stock_data(ticker=ticker.ticker_name, period='1y')
-            advice_single_moving_average = analyze_financial_data(1, data)
-            advice_double_moving_average = analyze_financial_data(2, data)
-            advice_rsi = analyze_financial_data(3, data)
-            advice_mean_reversion = analyze_financial_data(4, data)
-            print (advice_double_moving_average, type(advice_double_moving_average))
-            advices = {'Single moving average': advice_single_moving_average,
-                       'Double moving average': advice_double_moving_average,
-                       'RSI' : advice_rsi,
-                       'Mean reversion' : advice_mean_reversion} 
-            financial_data = {'Current_price': float(data.iloc[-1]['Close']), 'Advices': advices}
-            data = data.iloc[::-1]
+            advisors = Advisor.objects.all()
+            advices = {}
+            for advisor in advisors:
+                advices[advisor.name] = advisor.get_advice(data=data)
+            hisorical_data = {}
             for index, row in data.iterrows():
-                financial_data[str(index)] = row.drop('Close').to_dict()
+                hisorical_data[str(index)] = row.to_dict()
 
+            financial_data = {'Current_price': float(data.iloc[-1]['Close']),
+                            'Currency': ticker.currency,
+                            'Advices': advices,
+                            'History': hisorical_data
+                            }
+            data = data.iloc[::-1]
             return Response(financial_data)
         except:
             return Response("Data Unavailble")

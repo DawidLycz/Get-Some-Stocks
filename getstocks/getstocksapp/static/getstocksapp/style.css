@@ -20,6 +20,7 @@ nav ul {
 nav li {
     display: inline;
     margin-right: 20px;
+    font-size: 150%;
 }
 
 h1 {
@@ -70,6 +71,21 @@ td {
     display: none;
 }
 
+.advisor-box{
+    position: relative;
+    width:80%; 
+    margin:10%; 
+    height:300px; 
+    border: 5px inset gold; 
+    background-color: rgb(16, 0, 46);
+}
+
+.advisor-box:hover{
+    background-color: #fa7000;
+    cursor: pointer;
+}
+
+
 .advice-container {
     position: absolute;
     display: inline-block;
@@ -77,31 +93,30 @@ td {
 
 
 .advisor-portrait {
-    width: 200px;
-    height: 250px;
+    width: 100%;
+    height: 100%;
     border: 5px solid gold; 
-    display: block;
 }
 
-.big-advisor-portrait {
-    margin-left: 5%;
-    margin-top: 5%;
-    width: 35%;
-    border: 5px solid gold; 
-    display: block;
-    position: absolute
+.advisor-portrait:hover {
+    border: 5px solid #ff7c11; 
 }
+
+
 
 .overlay-text {
     position: absolute;
-    bottom: 0px;
+    bottom: 5%;
     left: 50%;
-    color: gold;
+    color: #ff7c11;
     transform: translate(-50%, 0);
-    font-size: 250%;
+    font-size: 350%;
     transition: opacity 0.3s ease-in-out;
     opacity: 1;
     white-space: nowrap;
+    border: 5px solid gold; 
+    background-color: rgb(16, 0, 46);
+
 }
 
 .overlay-text-top {
@@ -110,9 +125,7 @@ td {
     left: 50%;
     color: gold;
     transform: translate(-50%, 0);
-    font-size: 120%;
-    transition: opacity 0.3s ease-in-out;
-    opacity: 1;
+    font-size: 250%;
     white-space: nowrap;
 }
 
@@ -141,7 +154,7 @@ td {
 
 .chart-container{
     position: relative;
-    top: 60vh;
+    top: 2%;
     height :60%;
     border: 15px solid #fa7000;
     background-color: rgb(16, 0, 46);

@@ -16,48 +16,28 @@
 </div>
 
 {% if data_availble %}
-    <div style="margin-top: auto;">
-        <p style= "font-size: 70px; color: #ff7c11; text-align: center;">{{ current_price|floatformat:2 }} {{ ticker.currency }}</p>
-        
-        <a href="{% url 'getstocksapp:advisor-info' %}?advisor=Single-moving-average">
-            <div class="advice-container" style= "top: 52%; left: 10%;">
-                <img class="advisor-portrait" src="/static/getstocksapp/images/advisor_img1.png" alt="Advisor 1">
-                <div class="overlay-text">{{ advice_single_moving_average }}</div>
-                <div class="overlay-text-top">Single moving average</div>
-            </div>
+    {% if user.is_authenticated %}
+        <a href="{% url 'getstocksapp:wallet-add' %}?ticker-id={{ticker.id}}&price={{current_price|floatformat:2}}">
+            <button class="custom-button" type="button">Add to Wallet</button>
         </a>
-        <a href="{% url 'getstocksapp:advisor-info' %}?advisor=Double-moving-average">
-            <div class="advice-container" style= "top: 52%; right: 10%;">
-                <img class="advisor-portrait" src="/static/getstocksapp/images/advisor_img2.png" alt="Advisor 2">
-                <div class="overlay-text">{{ advice_double_moving_average }}</div>
-                <div class="overlay-text-top">Double moving average</div>
-            </div>
-        </a>
-        <a href="{% url 'getstocksapp:advisor-info' %}?advisor=RSI">
-            <div class="advice-container" style= "top: 85%; left: 10%;">
-                <img class="advisor-portrait" src="/static/getstocksapp/images/advisor_img3.png" alt="Advisor 3">
-                <div class="overlay-text">{{ advice_rsi }}</div>
-                <div class="overlay-text-top">RSI</div>
-            </div>
-        </a>
-        <a href="{% url 'getstocksapp:advisor-info' %}?advisor=Mean-reversion">
-            <div class="advice-container" style= "top: 85%; right: 10%;">
-                <img class="advisor-portrait" src="/static/getstocksapp/images/advisor_img4.png" alt="Advisor 4">
-                <div class="overlay-text">{{ advice_mean_reversion }}</div>
-                <div class="overlay-text-top">Mean reversion</div>
-            </div>
-        </a>
-        {% if user.is_authenticated %}
-            <a href="{% url 'getstocksapp:wallet-add' %}?ticker-id={{ticker.id}}&price={{current_price|floatformat:2}}">
-                <button class="custom-button" type="button">Add to Wallet</button>
-            </a>
+    {% endif %}
+    <p style= "font-size: 70px; color: #ff7c11; text-align: center; width: 100%;">{{ current_price|floatformat:2 }} {{ ticker.currency }}</p>
 
-        {% endif %}
-    </div>
+    {% for advisor in advisors %}
+        <a href="{% url 'getstocksapp:advisor-detail' advisor.id%}">
+            <div style="display: inline-block; position: relative; width:22%; margin:1%;">
+                <img class="advisor-portrait" src="{{ advisor.image.url }}" alt="Advisor 1">
+                <div class="overlay-text">{{advisor.advice}}</div>
+                <div class="overlay-text-top">{{advisor.name}}</div>
+            </div>
+        </a>
+
+    {% endfor %}
+
     <div class="chart-container">
         <div class=chart-header>
             {% for width, title, period in chart_periods %}
-                <a class="chart-button" style="left: {{width}}%;" href="{% url 'getstocksapp:tickerreview' ticker.id %}?period={{period}}">{{title}}</a> 
+                <a class="chart-button" style="left: {{width}}%;" href="{% url 'getstocksapp:ticker-detail' ticker.id %}?period={{period}}">{{title}}</a> 
             {% endfor %}
         </div>
         <img style="margin-top: 10%; width: 100%; overflow: hidden;" src="data:image/png;base64,{{ chart }}" alt="Stock data">

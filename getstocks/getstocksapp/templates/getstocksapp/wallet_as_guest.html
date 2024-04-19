@@ -72,7 +72,7 @@
     </div>
 {% else %}
     <h2 style="font-size: 500%; color: gold; text-align: center; ">This wallet is empty. Add some stocks from ticker browser</h2>
-    <a href="{% url 'getstocksapp:profile' user.id %}">
+    <a href="{% url 'getstocksapp:my-assets' user.id %}">
         <button class="custom-button" style ="margin-top: 2%;"type="button">Check other wallets</button>
     </a>
 {% endif %}

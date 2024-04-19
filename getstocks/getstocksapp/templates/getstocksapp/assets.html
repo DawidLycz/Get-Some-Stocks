@@ -1,0 +1,21 @@
+{% extends 'getstocksapp/base.html' %}
+
+{% block title %}
+    Assets
+{% endblock %}
+
+{% block content %}
+
+<div class="profile_data_container">
+    <p style="font-size: 350%; color: gold; margin-left: 20%;">Wallets:</p>
+    {% for obj in object_list %}
+        <a href="{% url 'getstocksapp:wallet' obj.id %}">
+            <div class="user-wallet-cell">
+                <span>{{ obj.name }}</span>
+                <span style="float:right; color:#fa7000;">{{ obj.owner }}</span>
+            </div>
+        </a>
+    {% endfor %}
+</div>
+
+{% endblock %}

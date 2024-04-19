@@ -78,16 +78,17 @@
     </div>
 {% else %}
     <h2 style="font-size: 500%; color: gold; text-align: center; ">This wallet is empty. Add some stocks from ticker browser</h2>
-    <a href="{% url 'getstocksapp:profile' user.id %}">
-        <button class="custom-button" style ="margin-top: 2%;"type="button">Check other wallets</button>
-    </a>
+
 {% endif %}
     <div>
+        <a href="{% url 'getstocksapp:my-assets' user.id %}">
+            <button class="custom-button" style ="margin-top: 2%;"type="button">Check other wallets</button>
+        </a>
         <a href="{% url 'getstocksapp:wallet-invite' object.id %}">
             <button class="custom-button" type="button">Invite to Wallet</button>
         </a>
         <a href="{% url 'getstocksapp:wallet-edit' object.id %}">
-            <button class="custom-button" type="button">Edit Wallet</button>
+            <button class="custom-button" type="button">Rename Wallet</button>
         </a>
         <form method="post">
             {% csrf_token %}

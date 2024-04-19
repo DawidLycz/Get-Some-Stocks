@@ -1,0 +1,18 @@
+{% extends 'getstocksapp/base.html' %}
+
+{% block title %}
+    Advisors
+{% endblock %}
+
+{% block content %}
+    <h1>Advisors:</h1>
+    {% for obj in object_list %}
+    <a href="{% url 'getstocksapp:advisor-detail' obj.id %}">
+        <div class="advisor-box">
+            <img style="position:absolute; height: 100%; border-right: 5px inset gold" src="{{ obj.image.url }}" alt="portrait">
+            <span style="position:absolute; text-align: center; margin-left: 30%; top:30%; font-size: 500%; color:gold">{{obj.name}}</span>       
+        </div>
+    </a>
+    {% endfor %}
+
+{% endblock %}

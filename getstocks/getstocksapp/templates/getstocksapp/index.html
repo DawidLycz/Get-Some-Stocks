@@ -9,7 +9,7 @@
     <ul>
         {% for market in markets %}
             {% if market.logo_img %}
-                <a href="{% url 'getstocksapp:marketreview' market.id %}">
+                <a href="{% url 'getstocksapp:market-detail' market.id %}">
                     <img style = "margin-left: -35px; width: 80px; height: 80px; border: 5px inset #ff7c11;" src="{{ market.logo_img.url }}" alt="{{market.name}}">
                 </a>
             {% endif %}
@@ -41,7 +41,7 @@
 
 
 <table border="5" style="width: 55%; table-layout: auto; margin-left: 10%; border-color: #ff7c11; background-color: rgb(16, 0, 46);">
-    <a href="{% url 'getstocksapp:tickerreview' clicked_ticker.id %}">
+    <a href="{% url 'getstocksapp:ticker-detail' clicked_ticker.id %}">
         <h1 style="margin-left: 10%; text-align: left; font-size: 50px; color: gold;">{{ clicked_ticker.company_name }}</h1>
     </a>
     <tr>

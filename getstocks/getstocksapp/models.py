@@ -4,6 +4,7 @@ from django.dispatch import receiver
 from django.db.models.signals import pre_save
 from .data_downloaders.alphavantage_data import get_ticker_info_obj
 from django.utils import timezone
+from pandas import DataFrame
 
 
 NO_DATA = ["No data", "None", "Not available", "Unknown", "N/A", "-", "NaN"]
@@ -76,6 +77,42 @@ class Ticker(models.Model):
         self.for_display = True
         self.save()
 
+
+class Advisor(models.Model):
+    name = models.CharField(max_length=200, default="Unknown")
+    image = models.ImageField(upload_to='advisors_images/', blank=True, null=True)
+    description = models.TextField(default='', blank=True)
+    code = models.TextField(default='', blank=True)
+
+    def __str__(self) -> str:
+        return self.name
+    
+    def __str__(self) -> str:
+        return self.name
+    
+    def get_dataframe(self, data, **kwargs) -> DataFrame:
+        global_vars, local_vars = {}, {'data': data, 'kwargs': kwargs}
+        exec(self.code, global_vars, local_vars)
+        return local_vars.get('df')
+    
+    def get_advice(self, data, ticks=3, **kwargs) -> str:
+        global_vars, local_vars = {}, {'data': data, 'kwargs': kwargs}
+        exec(self.code, global_vars, local_vars)
+        df = local_vars.get('df')
+        try:
+            last_few_signals = df.iloc[-ticks:]['signal']
+        except:
+            return "CAN'T UNDERSTAND DATA"
+        average = round(last_few_signals.mean(), 2)
+        if average >= 1.0:
+            return "BUY"
+        elif average <= -1.0:
+            return "SELL"
+        else:
+            return "STAND BY"
+
+
+ 
 
 class Wallet(models.Model):
     owner = models.ForeignKey(User, related_name='wallets', on_delete=models.CASCADE)
