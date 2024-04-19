@@ -41,11 +41,6 @@ from .trade_logic import *
 from .data_downloaders.yfinance_data import get_stock_data, get_prices_of_many_tickers
 
 
-STRATEGY_DESCRIPTION_FILE = r"getstocks/getstocksapp/static/getstocksapp/strategy_descriptions.json"
-
-with open(STRATEGY_DESCRIPTION_FILE, "r") as stream:
-    strategies_info = json.load(stream)
-
 def create_chart(data: DataFrame, ticker: Ticker, period: str = "1y") -> str:
     
     plt.figure(figsize=(12, 6))
@@ -210,38 +205,6 @@ class CSVUploadView(FormView):
 class AboutUs(generic.TemplateView):
     
     template_name = "getstocksapp/about_us.html"
-
-
-class AdvisorInfo(generic.TemplateView):
-
-    template_name = "getstocksapp/advisor_info.html"
-
-    def get_context_data(self, **kwargs: Any) -> dict[str, Any]:
-        
-        context = super().get_context_data(**kwargs)
-        advisor = self.request.GET.get('advisor')
-
-        if advisor == "Single-moving-average":
-            advisor_info = strategies_info["single_moving_average"]
-            advisor_image_url = "/static/getstocksapp/images/advisor_img1.png"
-        if advisor == "Single-moving-average":
-            advisor_info = strategies_info["double_moving_average"]
-            advisor_image_url = "/static/getstocksapp/images/advisor_img2.png"
-        if advisor == "RSI":
-            advisor_info = strategies_info["rsi"]
-            advisor_image_url = "/static/getstocksapp/images/advisor_img3.png"
-        if advisor == "Mean-reversion":
-            advisor_info = strategies_info["mean_reversion"]
-            advisor_image_url = "/static/getstocksapp/images/advisor_img4.png"
-        else:
-            advisor = "Unknown"
-            advisor_info = "Unknown Advisor"
-            advisor_image_url = "/static/getstocksapp/images/advisor_img1.png"
-        
-        context["title"] = advisor.replace("_", " ")
-        context["advisor_info"] = advisor_info
-        context["advisor_image_url"] = advisor_image_url
-        return context
 
 
 class AdvisorListView(generic.ListView):

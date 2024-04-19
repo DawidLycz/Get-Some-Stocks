@@ -43,7 +43,7 @@
                     <a style="color:gold" href="{% url 'getstocksapp:wallet-transfer-record' record.id %}">
                         <div class="wallet-record-cell-transfer"></div>
                     </a>
-                    <a style="color:gold" href="{% url 'getstocksapp:tickerreview' record.ticker.id %}">
+                    <a style="color:gold" href="{% url 'getstocksapp:ticker-detail' record.ticker.id %}">
                         <div class="wallet-record-cell-text">{{record.name}}</div>  
                     </a>    
                     <span style="color: rgb(29, 7, 109)">ghost</span>                 

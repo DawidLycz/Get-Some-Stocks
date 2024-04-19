@@ -37,7 +37,7 @@
         {% for record, price, growth_unit, total_value, total_growth in records_data %}
         <div class="wallet-record-cell">
                 <div class="wallet-record-cell-label">
-                    <a style="color:gold" href="{% url 'getstocksapp:tickerreview' record.ticker.id %}">
+                    <a style="color:gold" href="{% url 'getstocksapp:ticker-detail' record.ticker.id %}">
                         <div class="wallet-record-cell-text" style="width: 100%;">{{record.name}}</div>  
                     </a>    
                     <span style="color: rgb(29, 7, 109)">ghost</span>                 

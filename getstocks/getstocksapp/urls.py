@@ -14,7 +14,6 @@ urlpatterns = format_suffix_patterns([
     path('ticker/<int:pk>/', views.TickerDetailView.as_view(), name='ticker-detail'),
     path('upload_csv/', views.CSVUploadView.as_view(), name='upload-csv'),
     path('about/', views.AboutUs.as_view(), name='about-us'),
-    path('advisor_info/', views.AdvisorInfo.as_view(), name='advisor-info'),
     path('advisors/', views.AdvisorListView.as_view(), name='advisor-list'),
     path('advisors/<int:pk>/', views.AdvisorDetailView.as_view(), name='advisor-detail'),
     path('registration/', views.RegistrationView.as_view(), name='registration'),
@@ -34,9 +33,7 @@ urlpatterns = format_suffix_patterns([
     path('wallets/edit/record/<int:pk>/', views.WalletEditRecordView.as_view(), name='wallet-edit-record'),
     path('wallets/transfer/record/<int:pk>/', views.WalletTransferRecordView.as_view(), name='wallet-transfer-record'),
     path('wallets/delete/record/<int:pk>/', views.WalletDeleteRecordView.as_view(), name='wallet-delete-record'),
-    path('wallets/drop-guest/<int:pk1>/<int:pk2>/', views.WalletDropGuestView.as_view(), name='wallet-drop-guest'),
-
-    ###############
+    path('wallets/<int:pk1>/drop-guest/<int:pk2>/', views.WalletDropGuestView.as_view(), name='wallet-drop-guest'),
 
     path('api/', views.api_root, name='api-root'),
     path('api/markets/', views.ApiMarketListView.as_view(), name='api-market-list'),

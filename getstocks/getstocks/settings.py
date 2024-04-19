@@ -27,10 +27,39 @@ DATABASE_PASSWORD = 'Y7y7y7y7!!'
 
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
 
-ALLOWED_HOSTS = []
-
+if 'PYTHONANYWHERE_DOMAIN' in os.environ:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'DawidLycz$default',
+            'USER': 'DawidLycz',
+            'PASSWORD': DATABASE_PASSWORD,
+            'HOST': 'DawidLycz.mysql.pythonanywhere-services.com',
+            'PORT': '3306',
+            'TEST': {
+                'NAME': 'test_getstock_db',
+            },
+        }
+    }
+    DEBUG = False
+    ALLOWED_HOSTS = ['DawidLycz.pythonanywhere.com']
+else:
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.mysql',
+            'NAME': 'getstock_db',
+            'USER': 'getstocks_admin',
+            'PASSWORD': DATABASE_PASSWORD,
+            'HOST': 'localhost',
+            'PORT': '3306',
+            'TEST': {
+                'NAME': 'test_getstock_db',
+            },      
+        }
+    }
+    DEBUG = True
+    ALLOWED_HOSTS = []
 
 # Application definition
 
@@ -79,34 +108,7 @@ WSGI_APPLICATION = 'getstocks.wsgi.application'
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
-if 'PYTHONANYWHERE_DOMAIN' in os.environ:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'DawidLycz$default',
-            'USER': 'DawidLycz',
-            'PASSWORD': DATABASE_PASSWORD,
-            'HOST': 'DawidLycz.mysql.pythonanywhere-services.com',
-            'PORT': '3306',
-            'TEST': {
-                'NAME': 'test_getstock_db',
-            },
-        }
-    }
-else:
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.mysql',
-            'NAME': 'getstock_db',
-            'USER': 'getstocks_admin',
-            'PASSWORD': DATABASE_PASSWORD,
-            'HOST': 'localhost',
-            'PORT': '3306',
-            'TEST': {
-                'NAME': 'test_getstock_db',
-            },      
-        }
-    }
+
 
 # Password validation
 # https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
@@ -143,6 +145,7 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = 'static/'
+STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
