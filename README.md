@@ -3,7 +3,7 @@ Website aplication reviewing stocks. Allows to set up wallet, and track stock pr
 
 Visit website:
 
-http://dawidlycz.pythonanywhere.com/getsomestocks/
+http://dawidlycz.pythonanywhere.com/
 
 ## About the App
 Get-Some-Stocks is a web application built on the Django framework, allowing users to browse various stock markets around the world and analyze stock prices. Additionally, the application is equipped with built-in algorithms that, based on the chosen strategy, assess whether it is currently a good time to buy, sell, or wait.
