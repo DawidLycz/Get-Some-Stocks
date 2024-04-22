@@ -1,5 +1,6 @@
 django==5.0.1
 django-admin-extra-buttons==1.5.7
+djangorestframework==3.14.0
 alpha-vantage==2.3.1
 mysqlclient==2.2.1
 pandas==2.1.4
