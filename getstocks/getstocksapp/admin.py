@@ -81,8 +81,30 @@ class TickerAdmin(admin.ModelAdmin):
     mark_for_display_if_full_data.short_description = "Mark ticker as 'for display' if full data"
     mark_for_display_unconditionaly.short_description = "Mark ticker as 'for display' unconditionaly"
 
+class AdvisorAdmin(admin.ModelAdmin):
+    search_fields = ['name'] 
+    list_display = ('id', 'name', 'dictionary_name')
+    ordering = ['name']
+    actions = ['get_dictionary_name', 'overwrite_dictionary_name']
+
+    def get_dictionary_name(self, request, querryset):
+        for advisor in querryset:
+            if not advisor.dictionary_name:
+                advisor.dictionary_name = advisor.get_dictionary_name()
+                advisor.save()
+                self.message_user(request, "Dictionary name has been assingned")
+            else:
+                self.message_user(request, "Dictionary name already exist", )
+
+
+    def overwrite_dictionary_name(self, request, querryset):
+        for advisor in querryset:
+            advisor.dictionary_name = advisor.get_dictionary_name()
+            advisor.save()
+        self.message_user(request, "Dictionary name has been overwritten")
+
 admin.site.register(Market, MarketAdmin)
 admin.site.register(Ticker, TickerAdmin)
-admin.site.register(Advisor)
+admin.site.register(Advisor, AdvisorAdmin)
 admin.site.register(Wallet)
 admin.site.register(WalletRecord)

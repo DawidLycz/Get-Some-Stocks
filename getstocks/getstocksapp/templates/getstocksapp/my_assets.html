@@ -6,7 +6,7 @@
 
 {% block content %}
     <div class="profile_data_container">
-        <p style="font-size: 350%; color: gold; margin-left: 20%;">Wallets:</p>
+        <p style="font-size: 350%; color: rgb(216, 216, 216); margin-left: 20%;">Wallets:</p>
         {% for wallet in own_wallets %}
             <a href="{% url 'getstocksapp:wallet' wallet.id %}">
                 <div class="user-wallet-cell">
@@ -22,7 +22,7 @@
     </div>
     {% if wallets_as_guest %}
     <div class="profile_data_container">
-        <p style="font-size: 350%; color: gold; margin-left: 20%;">Wallets you are guest in:</p>
+        <p style="font-size: 350%; color: rgb(216, 216, 216); margin-left: 20%;">Wallets you are guest in:</p>
         {% for wallet in wallets_as_guest %}
             <a href="{% url 'getstocksapp:wallet' wallet.id %}">
                 <div class="user-wallet-guest-cell">

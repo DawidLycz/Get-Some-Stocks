@@ -652,7 +652,7 @@ class ApiTickerFinancialDataView(drfgenerics.RetrieveAPIView):
             advices = {}
             for advisor in advisors:
                 advices[advisor.name] = advisor.get_advice(data=data)
-            hisorical_data = {}
+            hisorical_data = {}         
             for index, row in data.iterrows():
                 hisorical_data[str(index)] = row.to_dict()
 

@@ -64,9 +64,3 @@ def get_ticker_info_obj(ticker: str) -> TickerInfo:
     obj.get_all_info()
     return obj
 
-# symbol = "A5H24"
-
-# api_info, meta_data = fd.get_company_overview(symbol)
-
-# print (api_info)
-

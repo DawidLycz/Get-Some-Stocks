@@ -2,7 +2,7 @@ from pandas import DataFrame
 
 AVAILABLE_STRATEGIES = ["single_moving_average", 'double_moving_averages', 'rsi', 'mean_reversion']
 
-def get_signals_single_moving_average_strategy(data: DataFrame, window: int=5) -> DataFrame:
+def get_signals_single_moving_average_strategy(data: DataFrame, window: int=5, **kwargs) -> DataFrame:
     '''
     Function creates new column called signal.
     Calculates moving average of last (default 5) prices and based on that, forms new record to signal.
@@ -17,7 +17,7 @@ def get_signals_single_moving_average_strategy(data: DataFrame, window: int=5) -
     data = signals['signal']
     return signals
 
-def get_signals_double_moving_averages_strategy(data: DataFrame, window1: int=20, window2: int=50) -> DataFrame:
+def get_signals_double_moving_averages_strategy(data: DataFrame, window1: int=20, window2: int=50, **kwargs) -> DataFrame:
     '''
     Function creates new column called signal.
     Calculates two moving averages (default 20 and 50 days) and compares them. 
@@ -32,7 +32,7 @@ def get_signals_double_moving_averages_strategy(data: DataFrame, window1: int=20
 
     return signals
 
-def get_signals_rsi_strategy(data: DataFrame, window: int=14, overbought_threshold: int=70, oversold_threshold: int=30) -> DataFrame:    
+def get_signals_rsi_strategy(data: DataFrame, window: int=14, overbought_threshold: int=70, oversold_threshold: int=30, **kwargs) -> DataFrame:    
     '''
     Function creates new column called signal.
     RSI strategy calculates average gain and average loss for specified time period (default 14) 
@@ -54,7 +54,7 @@ def get_signals_rsi_strategy(data: DataFrame, window: int=14, overbought_thresho
     signals.loc[signals['RSI'] < oversold_threshold, 'signal'] = 1.0
     return signals
 
-def get_signals_mean_reversion_strategy(data: DataFrame, sell_multiplier: float=1.5, buy_multiplier: float=0.75):
+def get_signals_mean_reversion_strategy(data: DataFrame, sell_multiplier: float=1.5, buy_multiplier: float=0.75, **kwargs):
     '''
     Function creates new column called signal.
     Function calculates average value of all records in "Close" column
@@ -89,37 +89,21 @@ def advice_move(signals: DataFrame, ticks: int=3) -> str:
 
 
 def analyze_financial_data(strategy: str, data: DataFrame, ticks: int=3, **kwargs) -> str:
-    if strategy in ["single_moving_average", "SMA", '1', 1]:
-        try:
-            window = kwargs['window']
-        except KeyError:
-            window = 5
+    if strategy == "single_moving_average":
+        window = kwargs.get("window", 5)
         signals = get_signals_single_moving_average_strategy(data, window)
-    elif strategy in ['double_moving_averages', 'DMA', "2", 2]:
-        try:
-            window1 = kwargs['window1']
-            window2 = kwargs['window2']
-        except KeyError:
-            window1 = 20
-            window2 = 50
+    elif strategy == 'double_moving_average':
+        window1 = kwargs.get('window1', 20)
+        window2 = kwargs.get('window2', 50)
         signals = get_signals_double_moving_averages_strategy(data, window1, window2)
-    elif strategy in ['rsi', "RSI", "3", 3]:
-        try: 
-            window = kwargs['window']
-            overbought_threshold = kwargs['overbought_threshold']
-            oversold_threshold = kwargs['oversold_threshold']
-        except:
-            window = 14
-            overbought_threshold = 70
-            oversold_threshold = 30
+    elif strategy == 'rsi':
+        window = kwargs.get('window', 14)
+        overbought_threshold = kwargs.get('overbought_threshold', 70)
+        oversold_threshold = kwargs.get('oversold_threshold', 30)
         signals = get_signals_rsi_strategy(data, window, overbought_threshold, oversold_threshold)
-    elif strategy in ['mean_reversion', 'MR', "4", 4]:
-        try:
-            sell_multiplier = kwargs['sell_multiplier']
-            buy_multiplier = kwargs['buy_multiplier']
-        except:
-            sell_multiplier = 1.5
-            buy_multiplier = 0.75
+    elif strategy == 'mean_reversion':
+        sell_multiplier = kwargs.get('sell_multiplier', 1.5)
+        buy_multiplier = kwargs.get('buy_multiplier', 0.75)
         signals = get_signals_mean_reversion_strategy(data, sell_multiplier, buy_multiplier)
     else:
         return "Unknown strategy"

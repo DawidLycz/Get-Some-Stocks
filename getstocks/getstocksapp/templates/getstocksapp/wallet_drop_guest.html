@@ -6,7 +6,7 @@
 
 {% block content %}
 {% if guest == user %}
-<h2 style="font-size: 400%; color: gold; text-align: center; ">Are you sure you want to leave this wallet?</h2>
+<h2 style="font-size: 400%; color: rgb(216, 216, 216); text-align: center; ">Are you sure you want to leave this wallet?</h2>
 
 <div>
     <form method="post" action="">
@@ -20,7 +20,7 @@
     </a>
 </div>
 {% elif wallet.owner == user %}
-<h2 style="font-size: 400%; color: gold; text-align: center; ">Are you sure you want to remove user {{user}} from wallet?</h2>
+<h2 style="font-size: 400%; color: rgb(216, 216, 216); text-align: center; ">Are you sure you want to remove user {{user}} from wallet?</h2>
 
 <div>
     <form method="post" action="">
@@ -34,7 +34,7 @@
     </a>
 </div>
 {% else %}
-<h2 style="font-size: 400%; color: gold; text-align: center; ">You don't have permission to do that.</h2>
+<h2 style="font-size: 400%; color: rgb(216, 216, 216); text-align: center; ">You don't have permission to do that.</h2>
 
 {% endif %}
 

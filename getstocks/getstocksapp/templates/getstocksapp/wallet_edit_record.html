@@ -5,8 +5,8 @@
 {% endblock %}
 
 {% block content %}
-<h2 style="font-size: 500%; color: gold; text-align: center; ">Edit record:</h2>
-<h2 style="font-size: 500%; color: gold; text-align: center; ">{{record.name}}</h2>
+<h2 style="font-size: 500%; color: rgb(216, 216, 216); text-align: center; ">Edit record:</h2>
+<h2 style="font-size: 500%; color: rgb(216, 216, 216); text-align: center; ">{{record.name}}</h2>
 <form method="post">
   {% csrf_token %}
   {{ form.as_p }}

@@ -7,11 +7,11 @@
 {% block content %}
 
 <div>
-    <h1 style= "font-size: 600%; color: gold; text-align: center;">{{ ticker.company_name }}</h1>
+    <h1 style= "font-size: 600%; color: rgb(216, 216, 216); text-align: center;">{{ ticker.company_name }}</h1>
     {% if ticker.company_description != "No data" %}
-        <a style="font-size: 20px; color: gold;">{{ ticker.company_description|linebreaks }}</a>
+        <a style="font-size: 20px; color: rgb(255, 255, 255);">{{ ticker.company_description|linebreaks }}</a>
     {% else %}
-        <a style="font-size: 20px; color: gold;">No info avalible</a>
+        <a style="font-size: 20px; color: rgb(255, 255, 255);">No info avalible</a>
     {% endif %}
 </div>
 

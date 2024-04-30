@@ -37,7 +37,7 @@
         {% for record, price, growth_unit, total_value, total_growth in records_data %}
         <div class="wallet-record-cell">
                 <div class="wallet-record-cell-label">
-                    <a style="color:gold" href="{% url 'getstocksapp:ticker-detail' record.ticker.id %}">
+                    <a style="color:rgb(255, 255, 255)" href="{% url 'getstocksapp:ticker-detail' record.ticker.id %}">
                         <div class="wallet-record-cell-text" style="width: 100%;">{{record.name}}</div>  
                     </a>    
                     <span style="color: rgb(29, 7, 109)">ghost</span>                 
@@ -71,7 +71,7 @@
         {% endfor %}
     </div>
 {% else %}
-    <h2 style="font-size: 500%; color: gold; text-align: center; ">This wallet is empty. Add some stocks from ticker browser</h2>
+    <h2 style="font-size: 500%; color: rgb(216, 216, 216); text-align: center; ">This wallet is empty. Add some stocks from ticker browser</h2>
     <a href="{% url 'getstocksapp:my-assets' user.id %}">
         <button class="custom-button" style ="margin-top: 2%;"type="button">Check other wallets</button>
     </a>

@@ -13,19 +13,19 @@
         <div>
             {% if guests %}
                 <span>Currently, the wallet contains the following guests:</span>
-            {% for guest in guests %}
-                <a href="{% url 'getstocksapp:wallet-drop-guest' object.id guest.id %}"><span style="color:#ff7c11">{{ guest }} ,</span></a>
-            {% endfor %}
+                {% for guest in guests %}
+                    <a href="{% url 'getstocksapp:wallet-drop-guest' object.id guest.id %}"><span style="color:#ff7c11">{{ guest }} ,</span></a>
+                {% endfor %}
             {% else %}
                 <span>There are no guests in this wallet</span>
             {% endif %}
         </div>
         <div style="margin-top: 10%;">
             {% if wealth_by_currencies %}
-            <span>Total wealth of this wallet, diverted into currencies:</span>
-            {% for currency, value in wealth_by_currencies.items %}
-            <p style="color:#ff7c11; text-align: center;">{{value|floatformat:2}} {{currency}}</p>
-            {% endfor %}
+                <span>Total wealth of this wallet, diverted into currencies:</span>
+                {% for currency, value in wealth_by_currencies.items %}
+                    <p style="color:#ff7c11; text-align: center;">{{value|floatformat:2}} {{currency}}</p>
+                {% endfor %}
             {% endif %}
         </div>
 </div>
@@ -34,16 +34,16 @@
         {% for record, price, growth_unit, total_value, total_growth in records_data %}
         <div class="wallet-record-cell">
                 <div class="wallet-record-cell-label">
-                    <a style="color:gold" href="{% url 'getstocksapp:wallet-delete-record' record.id %}">
+                    <a href="{% url 'getstocksapp:wallet-delete-record' record.id %}">
                         <div class="wallet-record-cell-cross"></div>
                     </a>
-                    <a style="color:gold" href="{% url 'getstocksapp:wallet-edit-record' record.id %}">
+                    <a href="{% url 'getstocksapp:wallet-edit-record' record.id %}">
                         <div class="wallet-record-cell-edit"></div>
                     </a>
-                    <a style="color:gold" href="{% url 'getstocksapp:wallet-transfer-record' record.id %}">
+                    <a href="{% url 'getstocksapp:wallet-transfer-record' record.id %}">
                         <div class="wallet-record-cell-transfer"></div>
                     </a>
-                    <a style="color:gold" href="{% url 'getstocksapp:ticker-detail' record.ticker.id %}">
+                    <a href="{% url 'getstocksapp:ticker-detail' record.ticker.id %}">
                         <div class="wallet-record-cell-text">{{record.name}}</div>  
                     </a>    
                     <span style="color: rgb(29, 7, 109)">ghost</span>                 
@@ -77,7 +77,7 @@
         {% endfor %}
     </div>
 {% else %}
-    <h2 style="font-size: 500%; color: gold; text-align: center; ">This wallet is empty. Add some stocks from ticker browser</h2>
+    <h2 style="font-size: 500%; color: rgb(216, 216, 216); text-align: center; ">This wallet is empty. Add some stocks from ticker browser</h2>
 
 {% endif %}
     <div>

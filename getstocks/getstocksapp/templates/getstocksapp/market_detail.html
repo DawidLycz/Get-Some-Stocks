@@ -6,19 +6,19 @@
 
 {% block content %}
 <div>
-    <h1 style= "font-size: 90px; color: gold; text-align: center;">{{ market.name }}</h1>
-    <a style="font-size: 20px; color: gold;">{{ market.description|linebreaks }}</a>
+    <h1 style= "font-size: 90px; color: rgb(216, 216, 216); text-align: center;">{{ market.name }}</h1>
+    <a style="font-size: 20px; color: rgb(255, 255, 255);">{{ market.description|linebreaks }}</a>
     <a href="{{ market.website }}" style=" font-size: 30px; color: rgb(255, 102, 0);">Visit {{ market.name }} website</a>
 </div>
 {% if related_tickers %}
-    <table border="5" style="width:100%; border-color: #ff7c11; background-color: rgb(16, 0, 46);">
-        <h1 style="text-align: center; font-size: 50px; color: gold;">STOCKS</h1>
+    <table border="5" style="width:100%; border-color: rgb(216, 216, 216); background-color: rgb(16, 0, 46);">
+        <h1 style="text-align: center; font-size: 50px; color: rgb(216, 216, 216);">STOCKS</h1>
         <tr>
             {% for sorter, name in table_columns %}
                 {% if sorter == current_sorter %}
-                    <th><a style="color: rgb(255, 102, 0);" href="{% url 'getstocksapp:market-detail' market.id %}?sort-by=-{{sorter}}">{{name}}</a></th>
+                    <th><a style="color: rgb(255, 255, 255);" href="{% url 'getstocksapp:market-detail' market.id %}?sort-by=-{{sorter}}">{{name}}</a></th>
                 {% else %}
-                    <th><a style="color: rgb(255, 102, 0);" href="{% url 'getstocksapp:market-detail' market.id %}?sort-by={{sorter}}">{{name}}</a></th>
+                    <th><a style="color: rgb(255, 255, 255);" href="{% url 'getstocksapp:market-detail' market.id %}?sort-by={{sorter}}">{{name}}</a></th>
                 {% endif %}
             {% endfor %}
             <th width=200px>Move</th>
@@ -37,6 +37,6 @@
         {% endfor %}
     </table>
 {% else %}
-    <p style="text-align: center; font-size: 300%; color:gold">No tickers available for this market yet.</p>
+    <p style="text-align: center; font-size: 300%; color:rgb(216, 216, 216)">No tickers available for this market yet.</p>
 {% endif %}
 {% endblock %}

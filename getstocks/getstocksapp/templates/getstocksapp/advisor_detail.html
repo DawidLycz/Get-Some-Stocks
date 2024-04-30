@@ -7,8 +7,8 @@
 {% block content %}
 
    <h1>{{advisor.name}}</h1>
-   <img style="position:absolute; width:40%; border: 5px inset gold" src="{{ advisor.image.url }}" alt="portrait">
-   <div style="margin-left: 45%; margin-right: 10%; font-weight: bold;color:gold; font-size: 200%;">{{advisor.description}}</div>
+   <img style="position:absolute; width:40%; border: 5px inset rgb(216, 216, 216)" src="{{ advisor.image.url }}" alt="portrait">
+   <div style="margin-left: 45%; margin-right: 10%; font-weight: bold;color:rgb(216, 216, 216); font-size: 200%;">{{advisor.description}}</div>
    <a href="{% url 'getstocksapp:advisor-list' %}">
     <button class="custom-button" style="position: absolute; margin-top:20%" type="button">Check other advisors</button>
    </a>

@@ -5,6 +5,7 @@ from django.db.models.signals import pre_save
 from .data_downloaders.alphavantage_data import get_ticker_info_obj
 from django.utils import timezone
 from pandas import DataFrame
+from .trade_logic import analyze_financial_data
 
 
 NO_DATA = ["No data", "None", "Not available", "Unknown", "N/A", "-", "NaN"]
@@ -82,36 +83,22 @@ class Advisor(models.Model):
     name = models.CharField(max_length=200, default="Unknown")
     image = models.ImageField(upload_to='advisors_images/', blank=True, null=True)
     description = models.TextField(default='', blank=True)
-    code = models.TextField(default='', blank=True)
+    dictionary_name = models.CharField(max_length=200, default="")
 
     def __str__(self) -> str:
         return self.name
+
+    def get_dictionary_name(self) -> str:
+        return self.name.lower().replace(" ", "_")
     
-    def __str__(self) -> str:
-        return self.name
-    
-    def get_dataframe(self, data, **kwargs) -> DataFrame:
-        global_vars, local_vars = {}, {'data': data, 'kwargs': kwargs}
-        exec(self.code, global_vars, local_vars)
-        return local_vars.get('df')
-    
-    def get_advice(self, data, ticks=3, **kwargs) -> str:
-        global_vars, local_vars = {}, {'data': data, 'kwargs': kwargs}
-        exec(self.code, global_vars, local_vars)
-        df = local_vars.get('df')
-        try:
-            last_few_signals = df.iloc[-ticks:]['signal']
-        except:
-            return "CAN'T UNDERSTAND DATA"
-        average = round(last_few_signals.mean(), 2)
-        if average >= 1.0:
-            return "BUY"
-        elif average <= -1.0:
-            return "SELL"
-        else:
-            return "STAND BY"
+    def get_advice(self, data: DataFrame) -> str:
+        return analyze_financial_data(strategy=self.dictionary_name, data=data)
 
 
+@receiver(pre_save, sender=Advisor)
+def advisor_pre_save(sender, instance, **kwargs):
+    if not instance.dictionary_name:
+        instance.dictionary_name = instance.get_dictionary_name()
  
 
 class Wallet(models.Model):

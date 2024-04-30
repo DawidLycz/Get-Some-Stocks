@@ -9,8 +9,8 @@
     {% for obj in object_list %}
     <a href="{% url 'getstocksapp:advisor-detail' obj.id %}">
         <div class="advisor-box">
-            <img style="position:absolute; height: 100%; border-right: 5px inset gold" src="{{ obj.image.url }}" alt="portrait">
-            <span style="position:absolute; text-align: center; margin-left: 30%; top:30%; font-size: 500%; color:gold">{{obj.name}}</span>       
+            <img style="position:absolute; height: 100%; border-right: 5px inset rgb(216, 216, 216)" src="{{ obj.image.url }}" alt="portrait">
+            <span style="position:absolute; text-align: center; margin-left: 30%; top:30%; font-size: 500%; color:rgb(216, 216, 216)">{{obj.name}}</span>       
         </div>
     </a>
     {% endfor %}

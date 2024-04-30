@@ -1,5 +1,5 @@
 header {
-    background-color: #333; 
+    background-color: #202020; 
     color: #fff;
     padding: 20px; 
 }
@@ -24,7 +24,7 @@ nav li {
 }
 
 h1 {
-    color: gold;
+    color: rgb(216, 216, 216);
     text-align: center;
     font-size: 90px;
 }
@@ -37,17 +37,17 @@ a {
 body {
     margin: 0;
     padding: 0;
-    background: rgb(0, 0, 0) url("images/background3.png") repeat;
+    background: rgb(31, 29, 29) url("images/backgrond3.png") repeat;
     background-attachment: fixed;
     background-size: cover;
 }
 
 th {
-    color: chocolate;
+    color: rgb(216, 216, 216);
 }
 
 td {
-    color: yellow;
+    color: rgb(216, 216, 216);
 }
 
 .tools-panel {
@@ -56,7 +56,7 @@ td {
     left: 0;
     width: 100px; 
     height: 900px;
-    background-color: #333; 
+    background-color: #202020; 
     color: #fff; 
     padding: 0px; 
 }
@@ -76,7 +76,7 @@ td {
     width:80%; 
     margin:10%; 
     height:300px; 
-    border: 5px inset gold; 
+    border: 5px inset rgb(216, 216, 216); 
     background-color: rgb(16, 0, 46);
 }
 
@@ -95,7 +95,7 @@ td {
 .advisor-portrait {
     width: 100%;
     height: 100%;
-    border: 5px solid gold; 
+    border: 5px solid rgb(216, 216, 216); 
 }
 
 .advisor-portrait:hover {
@@ -108,13 +108,13 @@ td {
     position: absolute;
     bottom: 5%;
     left: 50%;
-    color: #ff7c11;
+    color: rgb(216, 216, 216);
     transform: translate(-50%, 0);
     font-size: 350%;
     transition: opacity 0.3s ease-in-out;
     opacity: 1;
     white-space: nowrap;
-    border: 5px solid gold; 
+    border: 5px solid rgb(255, 255, 255); 
     background-color: rgb(16, 0, 46);
 
 }
@@ -123,7 +123,7 @@ td {
     position: absolute;
     top: 5px;
     left: 50%;
-    color: gold;
+    color: rgb(216, 216, 216);
     transform: translate(-50%, 0);
     font-size: 250%;
     white-space: nowrap;
@@ -156,7 +156,7 @@ td {
     position: relative;
     top: 2%;
     height :60%;
-    border: 15px solid #fa7000;
+    border: 15px solid rgb(216, 216, 216);
     background-color: rgb(16, 0, 46);
 }
 
@@ -165,7 +165,7 @@ td {
     height: 10%;
     width: 100%;
     background-color: rgb(16, 0, 46);
-    border-bottom: 5px solid #fa7000;
+    border-bottom: 5px solid rgb(216, 216, 216);
 }
 
 .chart-button{
@@ -197,8 +197,8 @@ td {
     margin-bottom: 30px;
     font-size: 30px;
     background-color:  rgb(16, 0, 46);
-    border: 5px inset gold;
-    color: #fa7000;
+    border: 5px inset rgb(216, 216, 216);
+    color: #ffffff;
     position: absolute;
     left: 50%;
     transform: translateX(-50%);
@@ -206,17 +206,17 @@ td {
 
 
 label {
-    color:gold;
+    color:rgb(216, 216, 216);
     font-size: 40px;
     margin-left: 10%;
 
 }
 
 .custom-button{
-    color: gold;
+    color: rgb(216, 216, 216);
     font-size: 300%;
     background-color: rgb(16, 0, 46);
-    border: 5px inset gold;
+    border: 5px inset rgb(216, 216, 216);
     margin-top: 1%;
     margin-left: 50%;
     transform: translateX(-50%); 
@@ -236,30 +236,30 @@ button:hover {
 
 .user-data-cell{
     font-size: 270%; 
-    color: gold; 
+    color: rgb(216, 216, 216); 
     margin-top: 1%;
     margin-left: 20%; 
     margin-right: 20%;
     background-color: rgb(16, 0, 46);
-    border: 5px inset gold;
+    border: 5px inset rgb(216, 216, 216);
 }
 
 .user-wallet-cell{
     font-size: 270%; 
-    color: gold; 
+    color: rgb(216, 216, 216); 
     margin-top: 1%;
 
     background-color: rgb(16, 0, 46);
-    border: 5px inset gold;
+    border: 5px inset rgb(216, 216, 216);
 }
 
 .user-wallet-guest-cell{
     font-size: 270%; 
-    color: gold; 
+    color: rgb(216, 216, 216); 
     margin-top: 1%;
 
     background-color: rgb(116, 116, 116);
-    border: 5px inset gold;
+    border: 5px inset rgb(216, 216, 216);
 }
 
 .user-wallet-cell:hover{
@@ -283,8 +283,8 @@ button:hover {
     margin-top:5%;
     margin-bottom:5%;
     width: 80%;
-    color: gold; 
-    border: 5px inset gold;
+    color: rgb(255, 255, 255); 
+    border: 5px inset rgb(216, 216, 216);
     background-color: rgb(16, 0, 46);
 }
 
@@ -293,8 +293,8 @@ button:hover {
     left: 0%;
     top:0%;
     background-color: rgb(29, 7, 109);
-    border: 5px inset gold;
-    color: gold; 
+    border: 5px inset rgb(216, 216, 216);
+    color: rgb(255, 255, 255); 
     text-align: center;
 }
 
@@ -312,17 +312,17 @@ button:hover {
 
 .wallet-record-cell{
     font-size: 270%; 
-    color: gold; 
+    color: rgb(255, 255, 255); 
     margin-top: 1%;
     background-color: rgb(16, 0, 46);
-    border: 5px inset gold;
+    border: 5px inset rgb(216, 216, 216);
 }
 
 .wallet-record-cell-label{
     position: relative;
     width : 100%;
     background-color : rgb(29, 7, 109);
-    border: 5px inset gold;
+    border: 5px inset rgb(216, 216, 216);
     box-sizing: border-box;
     text-align: center;
 }
@@ -333,7 +333,7 @@ button:hover {
     right: 0px;
     height: 100%;
     width: 4%;
-    border: 1px inset gold;
+    border: 1px inset rgb(216, 216, 216);
     box-sizing: border-box;
     text-align: center;
     background: url("images/cross1.png") center center no-repeat;
@@ -352,7 +352,7 @@ button:hover {
     right: 4%;
     height: 100%;
     width: 4%;
-    border: 1px inset gold;
+    border: 1px inset rgb(216, 216, 216);
     box-sizing: border-box;
     text-align: center;
     background: url("images/edit1.png") center center no-repeat;
@@ -371,7 +371,7 @@ button:hover {
     right: 8%;
     height: 100%;
     width: 4%;
-    border: 1px inset gold;
+    border: 1px inset rgb(216, 216, 216);
     box-sizing: border-box;
     text-align: center;
     background: url("images/arrows1.png") center center no-repeat;
@@ -390,7 +390,7 @@ button:hover {
     left: 0px;
     height: 100%;
     width: 88%;
-    border: 1px inset gold;
+    border: 1px inset rgb(216, 216, 216);
     box-sizing: border-box;
 }
 
